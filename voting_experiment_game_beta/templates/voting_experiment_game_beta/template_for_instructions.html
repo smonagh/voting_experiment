@@ -1,0 +1,36 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+     Vote - Round {{player.subsession.round_number}}
+{% endblock %}
+
+{% block content %}
+
+
+<p> The members of your Type A group have the follwing votes</p>
+
+        <table class = "table">
+            <tr>
+                <th><strong>Subject ID</strong></th>
+                <th>A1</th>
+                <th>A2</th>
+                <th>A3</th>
+                <th>A4</th>
+                <th>A5</th>
+            </tr>
+            <tr>
+                <th><strong>Votes</strong></th>
+                <th> 2 </th>
+                <th> 2 </th>
+                <th> 1 </th>
+                <th> 1 </th>
+                <th> 1 </th>
+            </tr>
+
+        </table>
+        <p> The sum of votes is 7</p>
+        <p> <strong>The project with at least 4 votes </strong> will be recommended participant B
+
+    {% next_button %}
+{% endblock %}

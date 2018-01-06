@@ -1,0 +1,37 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+     Vote - Period {{player.subsession.round_number}}
+{% endblock %}
+
+{% block content %}
+<div style = 'background-color:#f5f5f5; border-radius: 25px; padding:20px;'>
+    <p>
+        Your subject ID is <strong>A{{  player_id  }}</strong>
+    </p>
+    <p>The players in your group have the following number of votes</p>
+
+    <div class = "row">
+        <table class="table" style ='background-color: white;width: 85%; margin-left: auto; margin-right: auto;'>
+            <tr>
+                <th><strong>Subject ID</strong></th>
+                <th>A1</th>
+                <th>A2</th>
+                <th>A3</th>
+            </tr>
+            <tr>
+                <th><strong>Votes</strong></th>
+                <th> {{  vote_1  }} </th>
+                <th> {{  vote_2 }} </th>
+                <th> {{  vote_3 }} </th>
+            </tr>
+        </table>
+    </div>
+        <p> The sum of the votes is <strong>{{  total_vote_display  }} </strong>.</p>
+        <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B,</p>
+
+</div>
+
+{% next_button %}
+{% endblock %}

@@ -1,0 +1,251 @@
+{% load otree_tags staticfiles %}
+<style>
+img {
+  vertical-align: top;
+   padding: 10px;
+}
+</style>
+<div class="instructions well well-lg">
+
+
+
+
+<h3>The procedure on your computer screen</h3>
+
+    <p>
+        The screens in which you make your decisions are structured as follows.
+    </p>
+
+    <p>
+        <strong>1)</strong> The first screen in each period informs you about the number of votes each Type A participant holds and the number
+        of votes that are required to recommend a project to the Type B participant.
+        From this screen, you will learn your subject number and, importantly, how many votes you control in this period.
+    </p>
+    &nbsp;
+
+    <div style = 'background-color:white;border-radius: 25px; padding:20px; '>
+        <p>Your subject id is <strong>A1</strong></p>
+            <p>The players in your group have the following number of votes</p>
+
+
+    <div class = "row">
+        <table class="table" style ='background-color:#F5f5f5;width: 85%; margin-left: auto; margin-right: auto;'>
+
+            <tr>
+                <th><strong>Subject ID</strong></th>
+                <th><b>A1 (you)</b></th>
+                <th>A2</th>
+                <th>A3</th>
+            </tr>
+            <tr>
+                <th><strong>Votes</strong></th>
+                <th> 3 </th>
+                <th> 1 </th>
+                <th> 1 </th>
+            </tr>
+        </table>
+    </div>
+        <p> The sum of the votes is <strong> 5 </strong>.</p>
+        <p> <strong>The project with at least 3 votes </strong> will be recommended to participant B,</p>
+
+</div>
+
+    &nbsp;
+    <p>
+        You are one of the participants of type A.
+        Specifically, you are now participant A1.
+        You have two votes, the sum of the votes is 7, and 4 votes are needed for a decision.
+    </p>
+
+    <p>
+        <strong>2)</strong> In each period, the second screen that you and the other Type A participants see
+        , informs you about the value of Project X and the value of Project Y.
+        All participants of Type A are informed about the values of both projects at the same time.
+        The Type B participant has no information about the value of either of the two projects.
+        The Type B participant is also not informed about the procedure
+        (total number of votes, votes assigned to each voter, the 50% majority of votes required for a message to be sent to Type B)
+        by which the group of Type A participants decides on the message to be sent.
+    </p>
+
+    <p>
+        Below is an example screen containing the information about Projects X and Y:
+    </p>
+
+    &nbsp;
+
+    <div style = 'background-color: white;border-radius: 25px; padding:20px;'>
+    <div class = "row" >
+        &nbsp;
+        &nbsp;
+        <table  style ='background-color:#F5f5f5;width: 85%; margin-left: auto; margin-right: auto;'>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th style = 'border-color:black;border-style:solid'>
+                    <p><strong>Project X</strong></p>
+                </th>
+                <th style = 'border-color:black;border-style:solid'>
+                    <p><strong>Project Y</strong></p>
+                </th>
+
+            </tr>
+            <tr style = 'border-color:black; border-style:solid'>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>X</strong></p>
+                    <p>One participant in your group will receive <strong>E$ 12</strong> </p>
+                    <p>Player type B will receive <strong>E$ 8</strong></p>
+                </td>
+                <td style = 'border-color:black; border-style:solid'>
+                    <p> If participant B chooses project <strong>Y</strong></p>
+                    <p>One participant in your group will receive <strong>E$ 8</strong></p>
+                    <p>Player type B will receive <strong>E$ 12</strong></p>
+                </td>
+        </table>
+        &nbsp;
+        &nbsp;
+    </div>
+
+</div>
+
+    &nbsp;
+    <p>
+        In the example above, one of the Type A participants receives E$12 if Participant B chooses Project X,
+        and this Type A participant receives E$8 if Participant B chooses Project Y.
+    </p>
+
+    <p>
+        In the example above, if Participant B chooses Project X,
+        Participant B receives E$8. And if Participant B chooses Project Y, Participant B receives E$12.
+    </p>
+
+    <p>
+
+        <strong>3)</strong> In each period, the third screen is the decision screen.
+        Here, you will vote on whether Message X or Message Y should be sent to the Type B participant.
+        On this decision screen, you can always see in the upper row whether you are subject A1, A2, or A3.
+
+    </p>
+
+    <p>
+
+        Note,
+        the bottom of this screen tells you how many votes are needed to make a decision as to whether to send Message X or Message Y.
+    </p>
+
+    <p>
+        Using the computer mouse, please click on the field that indicates the decision that you want to make.
+    </p>
+    &nbsp;
+
+    <div style ='background-color: white;border-radius: 25px; padding:20px;'>
+    <div class = "modal-body row">
+        <div class = "col-md-6" style = "border-right: 2px solid black">
+            Your subject ID is <strong>A1</strong>
+            <p>The players in your group have the following number of votes</p>
+            <table class = "table-bordered"></table>
+                <table class = "table" style ='background-color:#F5f5f5;width: 85%; margin-left: auto; margin-right: auto;'>
+                    <tr style="border-bottom-color: black">
+                        <th><strong>Subject ID</strong></th>
+                        <th>A1</th>
+                        <th>A2</th>
+                        <th>A3</th>
+                    </tr>
+                    <tr>
+                        <th><strong>Votes</strong></th>
+                        <th> 2 </th>
+                        <th> 2 </th>
+                        <th> 1 </th>
+                    </tr>
+                </table>
+                <p> <strong>The project with at least 4 votes </strong> will be recommended to participant B</p>
+            &nbsp;
+            &nbsp:
+            <p>How do you decide in this situation? Please make your choice.</p>
+            <label><input type="radio" name="optradio">Project X</label>
+            &nbsp;
+            <label><input type="radio" name="optradio">Project Y</label>
+                &nbsp;
+
+                &nbsp;
+                &nbsp;
+
+        </div>
+        <div class = "col-md-6">
+            &nbsp;
+            <table style ='background-color: #F5f5f5;'>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th style = 'border-color:black;border-style:solid'>
+                    <p><strong>Project X</strong></p>
+                </th>
+                <th style = 'border-color:black;border-style:solid'>
+                    <p><strong>Project Y</strong></p>
+                </th>
+
+            </tr>
+            <tr style = 'border-color:black;border-style:solid'>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>X</strong></p>
+                    <p>One particpant in your group will receive <strong>E$12</strong> </p>
+                    <p>Player type B will receive <strong>E$8</strong></p>
+                </td>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>Y</strong></p>
+                    <p>One particpant in your group will receive <strong>E$8</strong></p>
+                    <p>Player type B will receive <strong>E$12</strong></p>
+                </td>
+        </table>
+    </div>
+        &nbsp;
+        &nbsp;
+    </div>
+
+</div>
+
+    &nbsp;
+    <p>
+        After you have clicked the button for Message X or Message Y, click on the next button to move to the next period,
+        where you may be allocated a new subject number. With this new subject number you might also have a different number of votes,
+        because each subject number is tied to the number of votes you see in the previous screen.
+        There will be five periods of this part (Part 1) of the experiment,
+        so that you are once A1, once A2, etc. in a random order, until you have cycled through all the five possibilities.
+    </p>
+
+    <p>
+        <strong>4)</strong> Part 1 is ended by the following screen.
+    </p>
+
+    &nbsp;
+
+    <div style ='background-color: white;border-radius: 25px; padding:20px;'>
+    &nbsp;
+    &nbsp;
+<p>
+    Part 1 is complete. Please click next and continue to the wait screen while the
+    other players finish making their decisions. Part 2 will start when everyone
+    has finished.
+</p>
+    &nbsp;
+<button type="button" class="btn btn-primary">Next</button>    &nbsp;
+</div>
+
+    &nbsp;
+
+    <p>
+         Once you have seen this screen, please press Next. You will then see a screen that announces the start of Part 2.
+    </p>
+
+    <p>
+        Part 2 proceeds exactly as Part 1, except that some of the A1, A2, etc. have a different numbers of votes than in Part 1.
+    </p>
+
+    <p>
+
+        After the second part is completed you will see a screen that summarizes your actions for both Part 1
+        and Part 2 of the experiment and your personal earnings across all 6 periods.
+
+    </p>
+
+    <p>
+
+        Do you have any questions? Please raise your hand and we will come to your cubicle.
+
+    </p>
+</div>

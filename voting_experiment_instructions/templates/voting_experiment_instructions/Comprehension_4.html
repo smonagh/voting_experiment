@@ -1,0 +1,44 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Comprehension Questions
+{% endblock %}
+{% block content %}
+<div style ='background-color: #f5f5f5;border-radius: 25px; padding:20px;'>
+    &nbsp;
+    &nbsp;
+            <p>Assume the following decisions by participants A1 and A3 You are participant <strong>A2</strong></p>
+            <table class = "table-bordered"></table>
+                <table class = "table" style ='background-color: white;width: 85%; margin-left: auto; margin-right: auto;'>
+                    <tr style="border-bottom-color: black">
+                        <th><strong>Subject ID</strong></th>
+                        <th>A1</th>
+                        <th>A2</th>
+                        <th>A3</th>
+                    </tr>
+                    <tr>
+                        <th><strong>Votes</strong></th>
+                        <th> 5</th>
+                        <th> 3 </th>
+                        <th> 3 </th>
+                    </tr>
+                    <tr>
+                        <th>Decision</th>
+                        <th>Message Y</th>
+                        <th> ? &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </th>
+                        <th>Message X</th>
+                    </tr>
+                </table>
+                <p> <strong>The project with at least 6 votes </strong> will be recommended to participant B</p>
+            &nbsp;
+            &nbsp;
+</div>
+&nbsp;
+&nbsp;
+{%formfield player.q_7 with label="In this situation, which message will be sent if you vote for Message X, recommending to the Type B participant to choose Project X over Project Y?" %}
+&nbsp;
+{%formfield player.q_8 with label="In this situation, which message will be sent if you vote for Message Y, recommending to the Type B participant to choose Project Y over Project X?" %}
+{% next_button %}
+
+{% endblock %}

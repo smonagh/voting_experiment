@@ -1,0 +1,83 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+     Vote - Period {{player.subsession.round_number}}
+{% endblock %}
+
+{% block content %}
+
+<style>
+ td,th{
+
+   padding: 10px;
+}
+
+</style>
+
+<div style ='background-color:#f5f5f5; border-radius: 25px; padding:20px;'>
+    <div class = "modal-body row">
+        <div class = "col-md-6" style = "border-right: 2px solid black">
+            Your subject ID is <strong>A{{  player_id  }}</strong>
+            <p>The players in your group have the following number of votes</p>
+            <table class = "table-bordered"></table>
+                <table class = "table" style ='background-color: white;width: 85%; margin-left: auto; margin-right: auto;'>
+                    <tr style="border-bottom-color: black">
+                        <th><strong>Subject ID</strong></th>
+                        <th>A1</th>
+                        <th>A2</th>
+                        <th>A3</th>
+                    </tr>
+                    <tr>
+                        <th><strong>Votes</strong></th>
+                        <th> {{  vote_1  }} </th>
+                        <th> {{  vote_2  }} </th>
+                        <th> {{  vote_3  }} </th>
+                    </tr>
+                </table>
+                <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>
+            &nbsp;
+            &nbsp:
+            <p>How do you decide in this situation? Please make your choice.</p>
+            <p>
+
+                &nbsp;
+                {% formfield player.vote with label="Which message will you vote to send to the type B player?" %}
+                &nbsp;
+
+                &nbsp;
+                &nbsp;
+
+        </div>
+        <div class = "col-md-6">
+            &nbsp;
+            <table style ='background-color:  white; '>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th>
+                    <p><strong>Project X</strong></p>
+                </th>
+                <th>
+                    <p><strong>Project Y</strong></p>
+                </th>
+
+            </tr>
+            <tr style = 'border-color:black;border-style:solid'>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>X</strong></p>
+                    <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                    <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+                </td>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>Y</strong></p>
+                    <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                    <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+                </td>
+        </table>
+    </div>
+        &nbsp;
+        &nbsp;
+    </div>
+
+</div>
+{% next_button %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block content %}
+
+    <p> Thank you for participating in the experiment. Please find your results listed below:</p>
+
+    <p> Your final payoff in experimental dollars is : {{participant.payoff}}</p>
+    <p> Your final payoff in $US is :  </p>
+
+{% endblock %}
+
+

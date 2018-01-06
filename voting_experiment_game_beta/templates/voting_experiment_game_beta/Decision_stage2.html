@@ -1,0 +1,16 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+     Decision - Period {{player.subsession.round_number}}
+{% endblock %}
+
+
+{% block content %}
+<div style ='background-color: #f5f5f5;'>
+
+{% formfield player.final_decision with label="Will you choose project X or Y?" %}
+</div>
+{% next_button %}
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Comprehension Questions
+{% endblock %}
+{% block content %}
+<p>In each of the two parts of the experiment, there are three periods. In each period you enter a voting decision.</p>
+
+{%formfield player.q_4 with label="In how many of the three periods in each part will you earn money?" %}
+
+{% next_button %}
+
+
+
+{% endblock %}
