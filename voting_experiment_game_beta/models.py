@@ -213,11 +213,11 @@ class Group(BaseGroup):
         for p in self.get_players():
             if p.participant.vars.get('treatment') == 'alpha' and self.subsession.round_number < 4:
                 if p.id_in_round == 1:
-                    my_list = Player.vote_binary(p,3,counter_x,counter_y)
+                    my_list = Player.vote_binary(p,2,counter_x,counter_y)
                     counter_x = my_list[0]
                     counter_y = my_list[1]
                 else:
-                    my_list = Player.vote_binary(p, 1, counter_x, counter_y)
+                    my_list = Player.vote_binary(p, 0, counter_x, counter_y)
                     counter_x = my_list[0]
                     counter_y = my_list[1]
             elif p.participant.vars.get('treatment') == 'alpha' and self.subsession.round_number > 3:
@@ -259,7 +259,7 @@ class Group(BaseGroup):
         elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number > 3:
             self.vote_win(3)
         elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number < 4:
-            self.vote_win(7)
+            self.vote_win(4)
 
     def vote_win(self, n):
         # Determine how many votes it takes to win

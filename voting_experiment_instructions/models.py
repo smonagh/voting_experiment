@@ -30,7 +30,7 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
     def before_session_starts(self):
-        iterant = itertools.cycle(['beta', 'beta'])
+        iterant = itertools.cycle(['alpha', 'alpha'])
         for g in self.get_groups():
             p1 = g.get_player_by_id(1)
             p1.participant.vars['treatment'] = next(iterant)
@@ -83,7 +83,7 @@ class Player(BasePlayer):
     )
     q_8 = models.CharField(
         choices=['Message X: “Project X will earn you more money than Project Y"',
-                 'Message Y: “Project Y will earn you more money than Project X”']
+                 'Message X: “Project X will earn you more money than Project Y"']
     )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()

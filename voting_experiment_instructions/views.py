@@ -145,7 +145,7 @@ class Comprehension_4(Page):
             self.player.num_wrong += 1
             wrong = True
 
-        if values['q_8'] != 'Message Y: “Project Y will earn you more money than Project X”':
+        if values['q_8'] != 'Message X: “Project X will earn you more money than Project Y"':
             self.player.num_wrong += 1
             wrong = True
 
