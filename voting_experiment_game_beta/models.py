@@ -253,9 +253,9 @@ class Group(BaseGroup):
     def make_suggestion(self):
         # Determine that group suggestion based on individual votes
         if self.get_player_by_id(1).participant.vars.get('treatment') == 'alpha' and self.round_number < 4:
-            self.vote_win(4)
+            self.vote_win(2)
         elif self.get_player_by_id(1).participant.vars.get('treatment') == 'alpha' and self.round_number > 3:
-            self.vote_win(3)
+            self.vote_win(2)
         elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number > 3:
             self.vote_win(3)
         elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number < 4:
