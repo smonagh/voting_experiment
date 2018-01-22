@@ -2,7 +2,7 @@
 {% load staticfiles otree_tags %}
 
 {% block title %}
-     Vote - Period {{player.subsession.round_number}}
+
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
         <div class = "col-md-6">
             <p>You will have an opportunity to receive up to a 6 E$ bonus by answering the following question:</p>
 
-                {% formfield player.belief_average with label="In how many of the 6 decisions do you think that the B-participants followed the message on average? Please enter a number between 0.0 and 10.0" %}
+                {% formfield player.belief_average with label="In how many of the 6 decisions do you think that the B-participants followed the message on average? Please enter a number between 0.0 and 6.0" %}
                 &nbsp;
             <p>Note that the true number may involve decimals as it is the average over several B-players.</p>
 

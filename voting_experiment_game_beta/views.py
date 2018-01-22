@@ -185,7 +185,6 @@ page_sequence = [
     Decision_stage1,
     Game_Wait_4,
     Voting_stage3_2,
-    Voting_stage4,
     Game_Wait_2,
     MyPage,
     Game_Wait_3,

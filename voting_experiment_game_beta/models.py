@@ -374,7 +374,7 @@ class Player(BasePlayer):
             [1, 'Yes']
         ]
     )
-    belief_average = models.DecimalField(min=0, max=10,max_digits=3,decimal_places=1)
+    belief_average = models.DecimalField(min=0, max=6,max_digits=3,decimal_places=1)
 
     final_decision = models.BooleanField(
         choices=[
@@ -411,7 +411,9 @@ class Player(BasePlayer):
                 self.id_in_roound = 6
 
     def assign_vote(self):
-        if self.subsession.round_number < 4 and self.participant.vars.get('treatment') == 'alpha':
+        if (self.subsession.round_number == 1 and self.participant.vars.get('treatment') == 'alpha') or
+        (self.subsession.round_number == 3 and self.participant.vars.get('treatment') == 'alpha') or
+        (self.subsession.round_number == 5 and self.participant.vars.get('treatment') == 'alpha'):
             if self.id_in_round == 1:
                 self.vote_weight = 2
                 self.group.fill_table_1 = 2
@@ -421,7 +423,9 @@ class Player(BasePlayer):
                 self.group.fill_table_3 = 0
                 self.group.fill_table_4 = 0
                 self.group.fill_table_5 = 0
-        elif 3 < self.subsession.round_number < 7 and self.participant.vars.get('treatment') == 'alpha':
+        elif (self.subsession.round_number == 2 and self.participant.vars.get('treatment') == 'alpha') or
+        (self.subsession.round_number == 4 and self.participant.vars.get('treatment') == 'alpha') or
+        (self.subsession.round_number == 6 and self.participant.vars.get('treatment') == 'alpha'):
             if self.id_in_round in range(1,6):
                 self.vote_weight = 1
                 self.group.fill_table_1 = 1
