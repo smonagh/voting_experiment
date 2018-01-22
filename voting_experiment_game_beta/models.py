@@ -411,7 +411,7 @@ class Player(BasePlayer):
                 self.id_in_roound = 6
 
     def assign_vote(self):
-        if self.subsession.round_number < 6 and self.participant.vars.get('treatment') == 'alpha':
+        if self.subsession.round_number < 4 and self.participant.vars.get('treatment') == 'alpha':
             if self.id_in_round == 1:
                 self.vote_weight = 2
                 self.group.fill_table_1 = 2
@@ -421,7 +421,7 @@ class Player(BasePlayer):
                 self.group.fill_table_3 = 0
                 self.group.fill_table_4 = 0
                 self.group.fill_table_5 = 0
-        elif 5 < self.subsession.round_number < 7 and self.participant.vars.get('treatment') == 'alpha':
+        elif 3 < self.subsession.round_number < 7 and self.participant.vars.get('treatment') == 'alpha':
             if self.id_in_round in range(1,6):
                 self.vote_weight = 1
                 self.group.fill_table_1 = 1
