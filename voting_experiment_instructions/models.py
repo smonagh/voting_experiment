@@ -83,7 +83,7 @@ class Player(BasePlayer):
     )
     q_8 = models.CharField(
         choices=['Message X: “Project X will earn you more money than Project Y"',
-                 'Message X: “Project X will earn you more money than Project Y"']
+                 'Message Y: “Project Y will earn you more money than Project X"']
     )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()
