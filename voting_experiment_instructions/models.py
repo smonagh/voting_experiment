@@ -2,7 +2,6 @@ from otree.api import (
     models, widgets, BaseConstants, BaseSubsession, BaseGroup, BasePlayer,
     Currency as c, currency_range
 )
-import itertools
 author = 'Steven Monaghan'
 
 doc = """
@@ -30,19 +29,13 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
     def before_session_starts(self):
-        iterant = itertools.cycle(['alpha', 'alpha'])
-        for g in self.get_groups():
-            p1 = g.get_player_by_id(1)
-            p1.participant.vars['treatment'] = next(iterant)
-            for i in range(2, 5):
-                g.get_player_by_id(i).participant.vars['treatment'] = p1.participant.vars['treatment']
 
         'Define if player is a type A or type B player'
         for g in self.get_groups():
-            g.get_player_by_id(1).participant.vars['role'] = 'A1'
-            g.get_player_by_id(2).participant.vars['role'] = 'A2'
-            g.get_player_by_id(3).participant.vars['role'] = 'A3'
-            g.get_player_by_id(4).participant.vars['role'] = 'B'
+            g.get_player_by_id(1).participant.vars['role'] = 1
+            g.get_player_by_id(2).participant.vars['role'] = 2
+            g.get_player_by_id(3).participant.vars['role'] = 3
+            g.get_player_by_id(4).participant.vars['role'] = 4
 
 class Group(BaseGroup):
     pass
@@ -84,6 +77,9 @@ class Player(BasePlayer):
     q_8 = models.CharField(
         choices=['Message X: “Project X will earn you more money than Project Y"',
                  'Message Y: “Project Y will earn you more money than Project X"']
+    )
+    q_9 = models.CharField(
+    choices=['False','True']
     )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()

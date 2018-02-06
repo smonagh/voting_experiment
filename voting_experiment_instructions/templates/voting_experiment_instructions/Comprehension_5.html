@@ -1,0 +1,20 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Comprehension Questions
+{% endblock %}
+{% block content %}
+<p>At the end of the experiment, my earnings will be paid out to me in cash in
+  US$. In the experiment, the other participants will not learn how much money
+  I earned and will receive no information from staff how much money I earned.
+  Additionally the other participants cannot observe how much money I earned
+   when my earnings are paid to me at the conclusion of the experiment. </p>
+
+{%formfield player.q_9 label="Is this statement True or False?" %}
+
+{% next_button %}
+
+
+
+{% endblock %}

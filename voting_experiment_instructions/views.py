@@ -152,6 +152,25 @@ class Comprehension_4(Page):
         if wrong == True:
             return 'You have chosen one or more wrong answers. Please read the question again and try to answer once more'
 
+class Comprehension_5(Page):
+
+    form_model = models.Player
+    form_fields = ['q_9']
+
+    def is_displayed(self):
+        player_id_list = [x * 4 for x in range(0, 12)]
+        if self.player.id_in_group not in player_id_list:
+            return self.player
+
+    def error_message(self,values):
+        wrong = False
+
+        if values['q_9'] != 'True':
+            self.player.num_wrong += 1
+            wrong = True
+
+        if wrong == True:
+            return ' You have chosen one or more wrong answers. Please read the question again and try to answer once more.'
 
 class Post_Instruction_Page(WaitPage):
     def after_all_players_arrive(self):
@@ -159,29 +178,21 @@ class Post_Instruction_Page(WaitPage):
 
 
 page_sequence = [
-    Screen_2_A,
-    Screen_2_B,
-    Screen_3_A,
-    Screen_3_B,
-    Screen_4_A,
-    Screen_5_A,
-    Section_6_A,
-    Comprehenstion_1,
-    Comprehension_2,
-    Comprehension_3,
-    Comprehension_4,
-    Post_Instruction_Page
+
     ]
 
 '''
-    Screen_2_A,
-    Screen_3_A,
-    Screen_3_B,
-    Screen_4_A,
-    Screen_5_A,
-    Section_6_A,
-    Comprehenstion_1,
-    Comprehension_2,
-    Comprehension_3,
-    Comprehension_4,
+Screen_2_A,
+Screen_2_B,
+Screen_3_A,
+Screen_3_B,
+Screen_4_A,
+Screen_5_A,
+Section_6_A,
+Comprehenstion_1,
+Comprehension_2,
+Comprehension_3,
+Comprehension_4,
+Comprehension_5,
+Post_Instruction_Page
 '''

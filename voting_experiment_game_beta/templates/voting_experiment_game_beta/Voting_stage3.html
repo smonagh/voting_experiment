@@ -2,7 +2,7 @@
 {% load staticfiles otree_tags %}
 
 {% block title %}
-     Vote - Period {{player.subsession.round_number}}
+     Vote - Round {{player.subsession.round_number}}
 {% endblock %}
 
 {% block content %}
@@ -23,6 +23,10 @@
             <table class = "table-bordered"></table>
                 <table class = "table" style ='background-color: white;width: 85%; margin-left: auto; margin-right: auto;'>
                     <tr style="border-bottom-color: black">
+                      <col width = '160px' />
+                      <col width = '160px' />
+                      <col width = '160px' />
+                      <col width = '160px' />
                         <th><strong>Subject ID</strong></th>
                         <th>A1</th>
                         <th>A2</th>
@@ -30,9 +34,24 @@
                     </tr>
                     <tr>
                         <th><strong>Votes</strong></th>
-                        <th> {{  vote_1  }} </th>
-                        <th> {{  vote_2  }} </th>
-                        <th> {{  vote_3  }} </th>
+                        {% if player_id == 1 %}
+                        <th> {{  vote_1  }} (you) </th>
+                        {% else %}
+                        <th> {{ vote_1 }} </th>
+                        {% endif %}
+
+                        {% if player_id == 2 %}
+                        <th> {{  vote_2  }} (you) </th>
+                        {% else %}
+                        <th> {{ vote_2 }} </th>
+                        {% endif %}
+
+                        {% if player_id == 3 %}
+                        <th> {{  vote_3  }} (you) </th>
+                        {% else %}
+                        <th> {{ vote_3 }} </th>
+                        {% endif %}
+
                     </tr>
                 </table>
                 <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>
@@ -51,6 +70,30 @@
         </div>
         <div class = "col-md-6">
             &nbsp;
+            {% if equal_round == True %}
+            <table style ='background-color:  white; '>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th>
+                    <p><strong>Project X</strong></p>
+                </th>
+                <th>
+                    <p><strong>Project Y</strong></p>
+                </th>
+
+            </tr>
+            <tr style = 'border-color:black;border-style:solid'>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>X</strong></p>
+                    <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                    <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+                </td>
+                <td style = 'border-color:black;border-style:solid'>
+                    <p> If participant B chooses project <strong>Y</strong></p>
+                    <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                    <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+                </td>
+        </table>
+            {% else %}
             <table style ='background-color:  white; '>
             <tr style = 'border-color:black;border-style:solid'>
                 <th>
@@ -73,6 +116,7 @@
                     <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
                 </td>
         </table>
+            {% endif %}
     </div>
         &nbsp;
         &nbsp;

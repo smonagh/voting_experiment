@@ -3,132 +3,139 @@ from otree.api import (
     Currency as c, currency_range
 )
 import random
-
+from ast import literal_eval
 author = 'Steven Monaghan'
 
 doc = """
 Voting Game
 """
+
 class Constants(BaseConstants):
     name_in_url = 'voting_experiment_game'
     players_per_group = 4
-    num_rounds = 7
+    num_rounds = 19
     show_up_fee = 0
     conversion_rate = 0
-    randlist_1 = []
-    while len(randlist_1) < 3:
-        rnum = random.randint(1, 3)
-        if rnum not in randlist_1:
-            randlist_1.append(rnum)
-    randlist_2 = []
-    while len(randlist_2) < 3:
-        rnum = random.randint(1, 3)
-        if rnum not in randlist_2:
-            randlist_2.append(rnum)
-    # Random payouts for player B
-    b_round_payout_rand1 = random.randint(1, 3)
-    b_round_payout_rand2 = random.randint(4, 6)
+
 
 
 class Subsession(BaseSubsession):
 
-    # Subsession level data
-    rand1_id = models.PositiveIntegerField()
-    rand2_id = models.PositiveIntegerField()
-    rand3_id = models.PositiveIntegerField()
-    round_payout_1 = models.PositiveIntegerField()
-    round_payout_2 = models.PositiveIntegerField()
-    round_payout_3 = models.PositiveIntegerField()
-    b_round_payout_1 = models.PositiveIntegerField()
-    b_round_payout_2 = models.PositiveIntegerField()
-
-    # Subsession level functions
+    players_payoff = models.CharField()
+    players_id = models.CharField()
 
     def before_session_starts(self):
+        """Assign variables before experiment starts"""
 
         # Randomize individuals into groups
-        if self.round_number < 7:
+        if self.round_number < 19:
             players = self.get_players()
             random.shuffle(players)
 
-            ca1_players = [p for p in players if p.participant.vars['role'] == 'A1' and
-                          p.participant.vars['treatment'] == 'alpha']
-            ca2_players = [p for p in players if p.participant.vars['role'] == 'A2' and
-                           p.participant.vars['treatment'] == 'alpha']
-            ca3_players = [p for p in players if p.participant.vars['role'] == 'A3' and
-                           p.participant.vars['treatment'] == 'alpha']
-            da_players = [p for p in players if p.participant.vars['role'] == 'B' and
-                          p.participant.vars['treatment'] == 'alpha']
-            cb1_players = [p for p in players if p.participant.vars['role'] == 'A1' and
-                          p.participant.vars['treatment'] == 'beta']
-            cb2_players = [p for p in players if p.participant.vars['role'] == 'A2' and
-                           p.participant.vars['treatment'] == 'beta']
-            cb3_players = [p for p in players if p.participant.vars['role'] == 'A3' and
-                           p.participant.vars['treatment'] == 'beta']
-            db_players = [p for p in players if p.participant.vars['role'] == 'B' and
-                          p.participant.vars['treatment'] == 'beta']
+            ca1_players = [p for p in players if p.participant.vars['role'] == 1]
+            ca2_players = [p for p in players if p.participant.vars['role'] == 2]
+            ca3_players = [p for p in players if p.participant.vars['role'] == 3]
+            da_players = [p for p in players if p.participant.vars['role'] == 4]
             group_matrix = []
-            alpha_list = []
-            beta_list = []
 
-            for p in self.get_players():
-                if p.participant.vars['treatment'] == 'alpha':
-                    alpha_list.append(1)
-                elif p.participant.vars['treatment'] == 'beta':
-                    beta_list.append(1)
-
-            while alpha_list:
-                new_group_a = [
+            while ca1_players:
+                new_group = [
                     ca1_players.pop(),
                     ca2_players.pop(),
                     ca3_players.pop(),
                     da_players.pop()
                 ]
-                group_matrix.append(new_group_a)
-                for i in range(0,4):
-                    alpha_list.remove(1)
-            while beta_list:
-                new_group_b = [
-                    cb1_players.pop(),
-                    cb2_players.pop(),
-                    cb3_players.pop(),
-                    db_players.pop()
-                ]
-                group_matrix.append(new_group_b)
-                for i in range(0,4):
-                    beta_list.remove(1)
+                group_matrix.append(new_group)
             self.set_group_matrix(group_matrix)
 
-
-        # establish random sequences for player b
-        self.b_round_payout_1 = Constants.b_round_payout_rand1
-        self.b_round_payout_2 = Constants.b_round_payout_rand2
-
-
-
-        # Assign A rounds in which players are payed
-        self.round_payout_1 = Constants.randlist_1[0]
-        self.round_payout_2= Constants.randlist_1[1]
-        self.round_payout_3 = Constants.randlist_1[2]
-
-
-        # Assign ID that player plays in a given round
-        self.rand1_id = Constants.randlist_2[0]
-        self.rand2_id = Constants.randlist_2[1]
-        self.rand3_id = Constants.randlist_2[2]
-
         # Establish group and player parameters
+        if self.round_number == 1:
+            group_payoff_rounds = self.set_payoff_rounds()
+            group_id_rounds = self.set_id_rounds()
+        round_list = self.gen_round_list()
         for g in self.get_groups():
             g.immoral_payoff = random.randint(0, 1)
+            g.equal_round = False
+            if self.round_number >6 and self.round_number <10:
+                g.immoral_payoff = 2
+                g.equal_round = True
+            elif self.round_number >15 and self.round_number < 19:
+                g.immoral_payoff = 2
+                g.equal_round = True
+            if self.round_number == 1:
+                self.players_payoff = str(group_payoff_rounds)
+                self.players_id = str(group_id_rounds)
+            else:
+                self.players_payoff = self.in_round(1).players_payoff
+                self.players_id = self.in_round(1).players_id
             for p in g.get_players():
-                Player.assign_id(p)
-                Player.assign_vote(p)
-            Group.total_vote_display(g)
-            Group.payoff_outcomes(g)
+                if self.round_number < 19:
+                    p.assign_id(literal_eval(self.players_id),self.round_number - 1)
+                    p.assign_payoff(literal_eval(self.players_payoff),
+                    round_list,self.round_number - 1)
+                p.assign_vote(self.round_number)
+            g.total_vote_display()
+            g.payoff_outcomes()
 
-    def list_pop(self,player,mylist):
-            mylist.remove(player)
-            return player
+    def set_payoff_rounds(self):
+        """Assign player payoff rounds for game"""
+        if self.round_number == 1:
+            group_value_list = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],
+                                [13,14,15],[16,17,18]]
+            player_payoff = {}
+            for player in [1,2,3,4]:
+                player_list = []
+                if player == 4:
+                    # Participant B players are assigned random round in each 6
+                    for i in range(6):
+                        player_list.append(random.randint(1,3))
+                    player_payoff['player_4'] = player_list
+                else:
+                    # Particpant A players are assigned values from group values list
+                    for i in range(6):
+                        val = random.choice(group_value_list[i])
+                        player_list.append(val)
+                        group_value_list[i].remove(val)
+                    player_payoff['player_{}'.format(player)] = player_list
+            return player_payoff
+
+    def set_id_rounds(self):
+        player_id = {}
+        if self.round_number == 1:
+            group_value_list = [[1,2,3] for i in range(18)]
+            for player in [1,2,3,4]:
+                id_list = []
+                if player == 4:
+                    id_list = [4 for i in range(18)]
+                    player_id['player_4'] = id_list
+                elif player < 4 :
+                    for i in range(18):
+                        val = random.choice(group_value_list[i])
+                        id_list.append(val)
+                        group_value_list[i].remove(val)
+                player_id['player_{}'.format(player)] = id_list
+
+            return player_id
+    def gen_round_list(self):
+        """Generate index for each of the rounds in the game"""
+        my_list = []
+
+        for i in range(1,19):
+            if i < 4:
+                my_list.append(0)
+            elif i > 3 and i < 7:
+                my_list.append(1)
+            elif i > 6 and i <10:
+                my_list.append(2)
+            elif i > 9 and i < 13:
+                my_list.append(3)
+            elif i > 12 and i < 16:
+                my_list.append(4)
+            elif i > 15 and i < 19:
+                my_list.append(5)
+            else:
+                pass
+        return my_list
 
 class Group(BaseGroup):
     # Group level data
@@ -147,7 +154,6 @@ class Group(BaseGroup):
     fill_table_1 = models.CharField()
     fill_table_2 = models.CharField()
     fill_table_3 = models.CharField()
-    treatment = models.CharField()
     total_vote_in_group = models.PositiveIntegerField()
     vote_to_win = models.PositiveIntegerField()
     x_payout = models.PositiveIntegerField()
@@ -156,7 +162,7 @@ class Group(BaseGroup):
     total_vote_y = models.PositiveIntegerField()
     message_space = models.CharField()
     alpha_average = models.FloatField()
-    beta_average = models.FloatField()
+    equal_round = models.BooleanField()
     group_moral_cost = models.BooleanField(
         choices = [
             [0, 'No'],
@@ -171,178 +177,129 @@ class Group(BaseGroup):
     #Group level functions
 
     def total_vote_display(self):
-        # sum up the total votes in group
+        """sum up the total votes in group"""
         count = 0
-        for p in Group.get_players(self):
+        for p in self.get_players():
             if p.id_in_round in [1,2,3]:
                 count += p.vote_weight
         self.total_vote_in_group = count
         self.vote_to_win = self.total_vote_in_group//2 + 1
 
-    def get_treatment(self):
-        self.treatment = self.get_player_by_id(1).participant.vars['treatment']
+    def total_vote_count(self):
+        """Determine which of the options wins contingent on the votes cast"""
+
+        total_x = 0
+        total_y = 0
+
+        if self.round_number < 10:
+            for player in self.get_players():
+                print('Less than 10: ',player.id_in_round)
+                if player.vote == 0:
+                    total_x += 1
+                elif player.vote == 1:
+                    total_y += 1
+        elif self.round_number > 9:
+            for player in self.get_players():
+                print('Greater than 10: ',player.id_in_round)
+                if player.id_in_round == 1:
+                    print('we got a player 1')
+                    if player.vote == 0:
+                        total_x += 2
+                    elif player.vote == 1:
+                        total_y += 2
+                else:
+                    print('we got someone else')
+                    if player.vote == 0:
+                        total_x += 0
+                    elif player.vote == 1:
+                        total_y += 0
+
+        if total_y >= self.vote_to_win:
+            self.message_space = "Project Y will earn you more money than Project X"
+            self.group_suggestion = 0
+        else:
+            self.message_space = "Project X will earn you more money than Project Y"
+            self.group_suggestion = 1
+
+        self.total_vote_x = total_x
+        self.total_vote_y = total_y
 
     def payoff_outcomes(self):
-        #assign payoff to outcome
+        """assign payoff to outcome"""
         if self.immoral_payoff == 0:
-            self.x_payout = 6
-            self.y_payout = 14
+            self.x_payout = 4
+            self.y_payout = 16
         elif self.immoral_payoff == 1:
-            self.x_payout = 14
-            self.y_payout = 6
+            self.x_payout = 16
+            self.y_payout = 4
+        elif self.immoral_payoff == 2:
+            rand_num = random.randint(0,1)
+            if rand_num == 0:
+                self.x_payout = 16
+                self.y_payout = 8
+            elif rand_num == 1:
+                self.x_payout = 8
+                self.y_payout = 16
 
-    def is_moral_cost(self):
-        # Determine whether player voted in his own interest or the interest of decision maker
-        for p in self.get_players():
-            if self.immoral_payoff == 0 and p.vote == 0:
-                p.individual_moral_cost = 1
-            elif self.immoral_payoff == 1 and p.vote == 1:
-                p.individual_moral_cost = 1
-            elif self.immoral_payoff == 0 and p.vote == 1:
-                p.individual_moral_cost = 0
-            elif self.immoral_payoff and p.vote == 0:
-                p.individual_moral_cost = 0
-
-    def total_vote_count(self):
-        #Return player votes and add up votes for option A and option B
-        counter_x = []
-        counter_y = []
-        my_list = []
-        totx = 0
-        toty = 0
-        for p in self.get_players():
-            if p.participant.vars.get('treatment') == 'alpha' and self.subsession.round_number < 4:
-                if p.id_in_round == 1:
-                    my_list = Player.vote_binary(p,2,counter_x,counter_y)
-                    counter_x = my_list[0]
-                    counter_y = my_list[1]
-                else:
-                    my_list = Player.vote_binary(p, 0, counter_x, counter_y)
-                    counter_x = my_list[0]
-                    counter_y = my_list[1]
-            elif p.participant.vars.get('treatment') == 'alpha' and self.subsession.round_number > 3:
-                my_list = Player.vote_binary(p, 1, counter_x, counter_y)
-                counter_x = my_list[0]
-                counter_y = my_list[1]
-            elif p.participant.vars.get('treatment') == 'beta' and self.subsession.round_number > 3:
-                my_list = Player.vote_binary(p, 1, counter_x, counter_y)
-                counter_x = my_list[0]
-                counter_y = my_list[1]
-            elif p.participant.vars.get('treatment') == 'beta' and self.subsession.round_number < 4:
-                if p.id_in_round == 1:
-                    my_list = Player.vote_binary(p, 3, counter_x, counter_y)
-                    counter_x = my_list[0]
-                    counter_y = my_list[1]
-                elif p.id_in_round == 2 or p.id_in_round == 3:
-                    my_list = Player.vote_binary(p, 2, counter_x, counter_y)
-                    counter_x = my_list[0]
-                    counter_y = my_list[1]
-                else:
-                    my_list = Player.vote_binary(p, 1, counter_x, counter_y)
-                    counter_x = my_list[0]
-                    counter_y = my_list[1]
-        for i in counter_x:
-            totx += i
-
-        for i in counter_y:
-            toty += i
-
-        self.total_vote_x = totx
-        self.total_vote_y = toty
-
-    def make_suggestion(self):
-        # Determine that group suggestion based on individual votes
-        if self.get_player_by_id(1).participant.vars.get('treatment') == 'alpha' and self.round_number < 4:
-            self.vote_win(2)
-        elif self.get_player_by_id(1).participant.vars.get('treatment') == 'alpha' and self.round_number > 3:
-            self.vote_win(2)
-        elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number > 3:
-            self.vote_win(3)
-        elif self.get_player_by_id(1).participant.vars.get('treatment') == 'beta' and self.round_number < 4:
-            self.vote_win(4)
-
-    def vote_win(self, n):
-        # Determine how many votes it takes to win
-        if self.total_vote_y < n:
-            self.group_suggestion = 0
-            self.message_space = 'Project X will earn you more money than Project Y'
-        elif self.total_vote_y >= n:
-            self.group_suggestion = 1
-            self.message_space = 'Project Y will earn you more money than Project X'
+        print('The x payout is :',self.x_payout,'The y payout is :',self.y_payout)
 
     def set_payoffs(self):
-        #Initialize payoff structure
-        #Define payouts each player receives
-
-        if self.immoral_payoff == 0 and Player.return_decision(self.get_player_by_id(4)) == 0:
-            Group.pay_interior(self,6,14)
-        elif self.immoral_payoff == 1 and Player.return_decision(self.get_player_by_id(4)) == 1:
-            Group.pay_interior(self, 6, 14)
-        elif self.immoral_payoff == 0 and Player.return_decision(self.get_player_by_id(4)) == 1:
-            Group.pay_interior(self, 14, 6)
-        elif self.immoral_payoff == 1 and Player.return_decision(self.get_player_by_id(4)) == 0:
-            Group.pay_interior(self, 14, 6)
-
-    def pay_interior(self,m,n):
-        # Determine the payoffs for Committe and Decision Maker
-        rank_list = [self.subsession.round_payout_1,self.subsession.round_payout_2,self.subsession.round_payout_3,
-                     self.subsession.round_payout_1,self.subsession.round_payout_2,self.subsession.round_payout_3,]
-        for p in self.get_players():
-            if p.participant.vars.get('role') == "B":
-                p.payout = 0
-                p.payout += m
+        """Set player payoffs for round"""
+        for player in self.get_players():
+            if player.payoff_rounds:
+                if self.g_final_decision == 0:
+                    player.payout = self.x_payout
+                elif self.g_final_decision == 1:
+                    player.payout = self.y_payout
             else:
-                p.payout = 0
-                if p.id_in_group == rank_list[self.subsession.round_number -1]:
-                    p.payout += n
+                player.payout = 0
 
-    def is_group_moral_cost(self):
-        if self.immoral_payoff == 0 and self.group_suggestion == 0:
-            self.group_moral_cost = 1
-        elif self.immoral_payoff == 1 and self.group_suggestion  == 1:
-            self.group_moral_cost = 1
-        elif self.immoral_payoff == 0 and self.group_suggestion  == 1:
-            self.group_moral_cost = 0
-        elif self.immoral_payoff == 1 and self.group_suggestion == 0:
-            self.group_moral_cost = 0
+    def make_sugestion(self):
+        """Make suggestion on the basis of group vote"""
+
+        # Collect the player votes
+        for player in self.get_players():
+            vote_count += player.vote
+        # If player votes are greater than two send y message
+        if vote_count >= 2:
+            self.message_space = "Project Y"
+            self.group_suggestion = 0
+        elif vote_count < 2:
+            self.message_space = "Project X"
+            self.group_suggestion = 1
+
+    def is_moral_cost(self):
+        """Determine if the suggestion moral or immoral"""
+
+        if self.x_payout > self.y_payout:
+            project = 0
+            if self.message_space == "Project X":
+                self.group_moral_cost = 1
+            elif self.message_space == "Project Y":
+                self.group_moral_cost = 0
+        elif self.y_payout > self.x_payout:
+            project = 1
+            if self.message_space == "Project X":
+                self.group_moral_cost = 0
+            elif self.message_space == "Project Y":
+                self.group_moral_cost = 1
+
+        for player in self.get_players():
+            player.is_ind_moral_cost(project)
 
     def final_payout_return(self):
-        for i in self.get_players():
-            x = 0
-            y = 1
-            for p in i.in_previous_rounds():
-                x += p.in_round(y).payout
-                y += 1
-            if i.id_in_group != 4:
-                if i.participant.vars.get('treatment') == 'alpha':
-                    if (i.in_round(6).belief_average <i.group.in_round(6).alpha_average + 0.2) and (
-                            i.in_round(6).belief_average> i.group.in_round(6).alpha_average - 0.2):
-                            x += 6
-                            p.belief_payout = 6
-                    elif (i.in_round(6).belief_average <i.group.in_round(6).alpha_average + 1) and (
-                          i.in_round(6).belief_average > i.group.in_round(6).alpha_average - 1):
-                            x+= 2
-                            p.belief_payout = 2
-                    else:
-                        p.belief_payout = 0
-                if i.participant.vars.get('treatment') == 'beta':
-                    if (i.in_round(6).belief_average <i.group.in_round(6).beta_average + 0.2) and (
-                        i.in_round(6).belief_average > i.group.in_round(6).beta_average - 0.2
-                    ):
-                            x += 6
-                            p.belief_payout = 6
-                    elif (i.in_round(6).belief_average <i.group.in_round(6).beta_average + 1) and (
-                          i.in_round(6).belief_average > i.group.in_round(6).beta_average - 1
-                    ):
-                            x+= 2
-                            p.belief_payout = 2
-                    else:
-                        p.belief_payout = 0
-            i.final_payout = x + 12
-            i.final_us_payout = i.final_payout / 2
 
+        for player in self.get_players():
+            payout_sum = 0
+            for p in player.in_previous_rounds():
+                if p.payout is None:
+                    pass
+                else:
+                    print(p.payout)
+                    payout_sum += p.payout
 
-
+            player.final_payout = payout_sum
+            player.final_us_payout = payout_sum/1
 
 
 class Player(BasePlayer):
@@ -350,11 +307,10 @@ class Player(BasePlayer):
     vote_weight = models.PositiveIntegerField()
     id_in_round = models.PositiveIntegerField()
     payout = models.PositiveIntegerField()
+    payoff_rounds = models.BooleanField()
     final_payout = models.PositiveIntegerField()
     final_us_payout = models.PositiveIntegerField()
     belief_payout = models.PositiveIntegerField()
-    start_time = models.FloatField()
-    elapsed_time = models.FloatField()
     individual_moral_cost = models.BooleanField(
      choices =[
                 [0,'No'],
@@ -374,7 +330,7 @@ class Player(BasePlayer):
             [1, 'Yes']
         ]
     )
-    belief_average = models.DecimalField(min=0, max=6,max_digits=3,decimal_places=1)
+    belief_average = models.DecimalField(min=0, max=18,max_digits=3,decimal_places=1)
 
     final_decision = models.BooleanField(
         choices=[
@@ -384,69 +340,47 @@ class Player(BasePlayer):
     )
 
     field = models.CharField()
-    age = models.IntegerField()
+    age = models.IntegerField(min=18,max=100)
     gender = models.CharField(
         choices=['Male', 'Female'],
         widget=widgets.RadioSelect(),
     )
 
-    #Player level functions
 
-    def assign_id(self):
-        mylist_1 = [self.subsession.rand1_id,self.subsession.rand2_id,self.subsession.rand3_id,
-                    self.subsession.rand1_id,self.subsession.rand2_id,self.subsession.rand3_id]
-        mylist_2 = [self.subsession.rand2_id,self.subsession.rand3_id,self.subsession.rand1_id,
-                    self.subsession.rand2_id,self.subsession.rand3_id,self.subsession.rand1_id]
-        mylist_3 = [self.subsession.rand3_id,self.subsession.rand1_id,self.subsession.rand2_id,
-                    self.subsession.rand3_id,self.subsession.rand1_id,self.subsession.rand2_id]
+    def assign_id(self,player_id,round_number):
+        """Assign players rounds in which they are assigned id's"""
+        if self.subsession.round_number < 19:
+            if self.participant.vars.get('role') == 4:
+                self.id_in_round = 4
+            else:
+                self.id_in_round = player_id['player_{}'.format(
+                self.participant.vars['role']
+                )][round_number]
 
-        if self.subsession.round_number < 7:
-            if self.participant.vars.get('role') == 'A1':
-                self.id_in_round = mylist_1[self.subsession.round_number - 1]
-            elif self.participant.vars.get('role') == 'A2':
-                self.id_in_round = mylist_2[self.subsession.round_number - 1]
-            elif self.participant.vars.get('role') == 'A3':
-                self.id_in_round = mylist_3[self.subsession.round_number - 1]
-            elif self.participant.vars['role'] == 'B':
-                self.id_in_roound = 6
+    def assign_payoff(self,player_payoff,round_list,round_number):
+        """Assign players rounds in which they are payed off"""
+        if self.subsession.round_number < 19:
+            if self.subsession.round_number == player_payoff['player_{}'.format(
+            self.participant.vars['role'])][round_list[round_number]]:
+                self.payoff_rounds = True
+            else:
+                self.payoff_rounds = False
 
-    def assign_vote(self):
-        if (self.subsession.round_number == 1 and self.participant.vars.get('treatment') == 'alpha'
-        ) or (self.subsession.round_number == 3 and self.participant.vars.get('treatment') == 'alpha'
-        ) or (self.subsession.round_number == 5 and self.participant.vars.get('treatment') == 'alpha'):
+    def assign_vote(self, round_number):
+        if round_number < 10:
+            self.vote_weight = 1
+            self.group.fill_table_1 = 1
+            self.group.fill_table_2 = 1
+            self.group.fill_table_3 = 1
+        elif round_number > 9:
             if self.id_in_round == 1:
                 self.vote_weight = 2
-                self.group.fill_table_1 = 2
-            elif self.id_in_round in range(2,6):
+            else:
                 self.vote_weight = 0
-                self.group.fill_table_2 = 0
-                self.group.fill_table_3 = 0
-                self.group.fill_table_4 = 0
-                self.group.fill_table_5 = 0
-        elif (self.subsession.round_number == 2 and self.participant.vars.get('treatment') == 'alpha'
-        ) or (self.subsession.round_number == 4 and self.participant.vars.get('treatment') == 'alpha'
-        ) or (self.subsession.round_number == 6 and self.participant.vars.get('treatment') == 'alpha'):
-            if self.id_in_round in range(1,6):
-                self.vote_weight = 1
-                self.group.fill_table_1 = 1
-                self.group.fill_table_2 = 1
-                self.group.fill_table_3 = 1
-                self.group.fill_table_4 = 1
-                self.group.fill_table_5 = 1
-        elif 3< self.subsession.round_number < 7 and self.participant.vars.get('treatment') == 'beta':
-            if self.id_in_round in range(1,4):
-                self.vote_weight = 1
-                self.group.fill_table_1 = 1
-                self.group.fill_table_2 = 1
-                self.group.fill_table_3 = 1
-        elif  self.subsession.round_number < 4 and self.participant.vars.get('treatment') == 'beta':
-            if self.id_in_round == 1:
-                self.vote_weight = 2
-                self.group.fill_table_1 = 2
-            elif self.id_in_round == 2 or self.id_in_round == 3:
-                self.vote_weight = 0
-                self.group.fill_table_2 = 0
-                self.group.fill_table_3 = 0
+
+            self.group.fill_table_1 = 2
+            self.group.fill_table_2 = 0
+            self.group.fill_table_3 = 0
 
     def return_belief(self):
         return self.belief
@@ -457,40 +391,32 @@ class Player(BasePlayer):
     def decision_for_group(self):
         self.group.g_final_decision = self.final_decision
 
-    def vote_binary(self, n, initial,initial_2):
-        # Determine how many votes are cast
-        if self.id_in_round in [1,2,3]:
+    def is_ind_moral_cost(self, project):
+        """Determine if player voted morally or not"""
+        if project == 0:
             if self.vote == 1:
-                initial_2.append(n)
+                self.individual_moral_cost = 1
             elif self.vote == 0:
-                initial.append(n)
-        return [initial, initial_2]
+                self.individual_moral_cost = 0
+        elif project == 1:
+            if self.vote == 1:
+                self.individual_moral_cost = 0
+            elif self.vote == 0:
+                self.individual_moral_cost = 1
 
     def followed(self):
         # Find the number of times that they followed
         alpha_list = []
-        beta_list = []
         for p in self.subsession.get_players():
             if p.id_in_group == 4:
-                if p.participant.vars.get('treatment') == 'alpha':
-                    for i in range(1,4):
-                        if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
-                            alpha_list.append(1)
-                        elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
-                            alpha_list.append(0)
-                if p.participant.vars.get('treatment') == 'beta':
-                    for i in range(1,4):
-                        if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
-                            beta_list.append(1)
-                        elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
-                            beta_list.append(0)
+                for i in range(1,4):
+                    if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
+                        alpha_list.append(1)
+                    elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
+                        alpha_list.append(0)
 
         # Calculate the average number of times
         alpha_counter = 0
-        beta_counter = 0
         for i in alpha_list:
             alpha_counter += i
-        for i in beta_list:
-            beta_counter += i
-        self.alpha_average = (alpha_counter/20)*4
-        self.beta_average = (beta_counter/20)*4
+        self.alpha_average = (alpha_counter/18)*4

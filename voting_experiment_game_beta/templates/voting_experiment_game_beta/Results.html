@@ -31,76 +31,15 @@
             <th>Final Decision</th>
             <th>Payoff</th>
         </tr>
+        {% for a,b,c,d,e in row_list %}
         <tr>
-            <td>{{row11}}</td>
-            <td>{{row12}}</td>
-            <td>{{row13}}</td>
-            <td>{{row14}}</td>
-            <td>E${{row15}}</td>
+            <td>{{a}}</td>
+            <td>{{b}}</td>
+            <td>{{c}}</td>
+            <td>{{d}}</td>
+            <td>E${{e}}</td>
         </tr>
-        <tr>
-            <td>{{row21}}</td>
-            <td>{{row22}}</td>
-            <td>{{row23}}</td>
-            <td>{{row24}}</td>
-            <td>E${{row25}}</td>
-        </tr>
-        <tr>
-            <td>{{row31}}</td>
-            <td>{{row32}}</td>
-            <td>{{row33}}</td>
-            <td>{{row34}}</td>
-            <td>E${{row35}}</td>
-        </tr>
-        <tr>
-            <td>{{row41}}</td>
-            <td>{{row42}}</td>
-            <td>{{row43}}</td>
-            <td>{{row44}}</td>
-            <td>E${{row45}}</td>
-        </tr>
-        <tr>
-            <td>{{row51}}</td>
-            <td>{{row52}}</td>
-            <td>{{row53}}</td>
-            <td>{{row54}}</td>
-            <td>E${{row55}}</td>
-        </tr>
-        <tr>
-            <td>{{row61}}</td>
-            <td>{{row62}}</td>
-            <td>{{row63}}</td>
-            <td>{{row64}}</td>
-            <td>E${{row65}}</td>
-        </tr>
-        <tr>
-            <td>{{row71}}</td>
-            <td>{{row72}}</td>
-            <td>{{row73}}</td>
-            <td>{{row74}}</td>
-            <td>E${{row75}}</td>
-        </tr>
-        <tr>
-            <td>{{row81}}</td>
-            <td>{{row82}}</td>
-            <td>{{row83}}</td>
-            <td>{{row84}}</td>
-            <td>E${{row85}}</td>
-        </tr>
-        <tr>
-            <td>{{row91}}</td>
-            <td>{{row92}}</td>
-            <td>{{row93}}</td>
-            <td>{{row94}}</td>
-            <td>E${{row95}}</td>
-        </tr>
-        <tr>
-            <td>{{row101}}</td>
-            <td>{{row102}}</td>
-            <td>{{row103}}</td>
-            <td>{{row104}}</td>
-            <td>E${{row105}}</td>
-        </tr>
+        {% endfor %}
     </table>
     &nbsp;
     &nbsp;
@@ -108,5 +47,3 @@
 
 {%next_button%}
 {% endblock %}
-
-
