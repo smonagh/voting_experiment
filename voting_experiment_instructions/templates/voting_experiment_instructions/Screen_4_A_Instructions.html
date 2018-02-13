@@ -1,6 +1,23 @@
 {% load otree_tags staticfiles %}
 {% load staticfiles %}
+<style>
+ td,th{
 
+   padding: 10px;
+}
+
+table{
+  border-color: black;
+  border-style: solid;
+}
+th {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+
+}
+
+</style>
 
 <div class="instructions well well-lg">
 <h1>The Voting Procedure</h1>
@@ -57,7 +74,6 @@
 
     <div style = 'background-color:white;border-radius: 25px; padding:20px; '>
 
-    <p>The players in your group have the following number of votes</p>
 
     <div class = "row">
         <table class="table" style ='background-color:#F5f5f5;width: 85%; margin-left: auto; margin-right: auto;'>
@@ -67,13 +83,13 @@
               <col width = '160px' />
               <col width = '160px' />
               <col width = '160px' />
-                <th><strong>Subject ID</strong></th>
+                <th><strong>Type A Participant</strong></th>
                 <th>A1 (You)</th>
                 <th>A2</th>
                 <th>A3</th>
             </tr>
             <tr>
-                <th><strong>Votes</strong></th>
+                <th><strong>Number of Votes</strong></th>
                 <th> 2 </th>
                 <th> 2 </th>
                 <th> 1 </th>

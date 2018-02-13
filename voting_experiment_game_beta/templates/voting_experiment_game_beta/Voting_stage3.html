@@ -4,13 +4,26 @@
 {% block title %}
      Vote - Round {{player.subsession.round_number}}
 {% endblock %}
+{% block styles %}
 
+{% endblock %}
 {% block content %}
 
 <style>
  td,th{
 
    padding: 10px;
+}
+
+table{
+  border-color: black;
+  border-style: solid;
+}
+th {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+
 }
 
 </style>
@@ -21,35 +34,35 @@
             Your subject ID is <strong>A{{  player_id  }}</strong>
             <p>The players in your group have the following number of votes</p>
             <table class = "table-bordered"></table>
-                <table class = "table" style ='background-color: white;width: 85%; margin-left: auto; margin-right: auto;'>
-                    <tr style="border-bottom-color: black">
+                <table class = "table" style ='background-color: white; width: 85%; margin-left: auto; margin-right: auto;'>
+                    <tr style=" border: 1px; border-color:black; border-style:solid;" >
                       <col width = '160px' />
                       <col width = '160px' />
                       <col width = '160px' />
                       <col width = '160px' />
-                        <th><strong>Subject ID</strong></th>
+                        <th ><strong>Type A Participant</strong></th>
                         <th>A1</th>
                         <th>A2</th>
                         <th>A3</th>
                     </tr>
-                    <tr>
-                        <th><strong>Votes</strong></th>
+                    <tr style=" border: 1px; border-color:black; border-style:solid;">
+                        <th><strong>Number of Votes</strong></th>
                         {% if player_id == 1 %}
-                        <th> {{  vote_1  }} (you) </th>
+                        <th> {{  vote_1  }} (You) </th>
                         {% else %}
                         <th> {{ vote_1 }} </th>
                         {% endif %}
 
                         {% if player_id == 2 %}
-                        <th> {{  vote_2  }} (you) </th>
+                        <th> {{  vote_2  }} (You) </th>
                         {% else %}
                         <th> {{ vote_2 }} </th>
                         {% endif %}
 
                         {% if player_id == 3 %}
-                        <th> {{  vote_3  }} (you) </th>
+                        <th> {{  vote_3  }} (You) </th>
                         {% else %}
-                        <th> {{ vote_3 }} </th>
+                        <th> {{ vote_3 }}</th>
                         {% endif %}
 
                     </tr>
@@ -124,4 +137,5 @@
 
 </div>
 {% next_button %}
+
 {% endblock %}

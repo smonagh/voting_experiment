@@ -81,5 +81,12 @@ class Player(BasePlayer):
     q_9 = models.CharField(
     choices=['False','True']
     )
+    q_10 = models.CharField(
+    widget=widgets.RadioSelect,
+    choices = [
+        'Only the decision that you make',
+        'Only the decisions that other participants make',
+        'The decision that you make, the decisions that other participants make, and who among the three Type A participants in a given round is randomly selected to earn the money that is associated with the project that the Type B participant chose to implement']
+    )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()
