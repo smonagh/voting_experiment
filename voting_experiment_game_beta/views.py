@@ -98,6 +98,8 @@ class Game_Wait_2(WaitPage):
     def after_all_players_arrive(self):
         self.group.get_player_by_id(4).decision_for_group()
         self.group.set_payoffs()
+        if self.round_number == 19:
+            self.group.set_add_payoffs()
         for player in self.group.get_players():
             print(player.payout)
 

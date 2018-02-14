@@ -86,9 +86,11 @@ class Subsession(BaseSubsession):
             for player in [1,2,3,4]:
                 player_list = []
                 if player == 4:
+                    group_value_list = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],
+                                        [13,14,15],[16,17,18]]
                     # Participant B players are assigned random round in each 6
                     for i in range(6):
-                        player_list.append(random.randint(1,3))
+                        player_list.append(random.choice(group_value_list[i]))
                     player_payoff['player_4'] = player_list
                 else:
                     # Particpant A players are assigned values from group values list
@@ -200,15 +202,12 @@ class Group(BaseGroup):
                     total_y += 1
         elif self.round_number > 9:
             for player in self.get_players():
-                print('Greater than 10: ',player.id_in_round)
                 if player.id_in_round == 1:
-                    print('we got a player 1')
                     if player.vote == 0:
                         total_x += 2
                     elif player.vote == 1:
                         total_y += 2
                 else:
-                    print('we got someone else')
                     if player.vote == 0:
                         total_x += 0
                     elif player.vote == 1:
@@ -241,7 +240,6 @@ class Group(BaseGroup):
                 self.x_payout = 8
                 self.y_payout = 16
 
-        print('The x payout is :',self.x_payout,'The y payout is :',self.y_payout)
 
     def set_payoffs(self):
         """Set player payoffs for round"""
@@ -253,6 +251,24 @@ class Group(BaseGroup):
                     player.payout = self.y_payout
             else:
                 player.payout = 0
+
+    def set_add_payoffs(self):
+        """Add players payoff from bonus question"""
+        for player in self.get_players():
+            if player.participant.vars['role'] == 4:
+                pass
+            else:
+                if player.belief_average < self.alpha_average + .02 or player.belief_average > self.alpha_average - .02:
+                    player.payoff += 6
+                    player.belief_payout += 6
+                elif player.belief_average < self.alpha_average + 1 or player.belief_average > self.alpha_average -1:
+                    player.payoff += 2
+                    player.belief_payout += 2
+                else:
+                    player.payoff += 0
+                    player.belief_payout += 0
+
+
 
     def make_sugestion(self):
         """Make suggestion on the basis of group vote"""
@@ -299,7 +315,24 @@ class Group(BaseGroup):
                     payout_sum += p.payout
 
             player.final_payout = payout_sum
-            player.final_us_payout = payout_sum/1
+            player.final_us_payout = payout_sum/6
+
+    def followed(self):
+        # Find the number of times that they followed
+        alpha_list = []
+        for p in self.get_players():
+            if p.id_in_group == 4:
+                for i in range(1,4):
+                    if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
+                        alpha_list.append(1)
+                    elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
+                        alpha_list.append(0)
+
+        # Calculate the average number of times
+        alpha_counter = 0
+        for i in alpha_list:
+            alpha_counter += i
+        self.alpha_average = alpha_counter
 
 
 class Player(BasePlayer):
@@ -403,20 +436,3 @@ class Player(BasePlayer):
                 self.individual_moral_cost = 0
             elif self.vote == 0:
                 self.individual_moral_cost = 1
-
-    def followed(self):
-        # Find the number of times that they followed
-        alpha_list = []
-        for p in self.subsession.get_players():
-            if p.id_in_group == 4:
-                for i in range(1,4):
-                    if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
-                        alpha_list.append(1)
-                    elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
-                        alpha_list.append(0)
-
-        # Calculate the average number of times
-        alpha_counter = 0
-        for i in alpha_list:
-            alpha_counter += i
-        self.alpha_average = (alpha_counter/18)*4
