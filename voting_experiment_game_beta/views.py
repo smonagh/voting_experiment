@@ -104,7 +104,6 @@ class Game_Wait_2(WaitPage):
             print(player.payout)
 
 
-
 class Game_Wait_4(WaitPage):
 
         def is_displayed(self):
