@@ -27,6 +27,7 @@ class Screen_3_A(Page):
 
 
 class Screen_3_B(Page):
+
     def is_displayed(self):
         player_id_list = [x * 4 for x in range(0, 12)]
         if self.player.id_in_group in player_id_list:
@@ -214,9 +215,7 @@ page_sequence = [
     Screen_3_A,
     Screen_3_B,
     Screen_4_A,
-    Screen_4_B_instructions,
     Screen_5_A,
-    Screen_5_B_instructions,
     Section_6_A,
     Comprehenstion_1,
     Comprehension_2,

@@ -42,6 +42,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    
     q_1 = models.CharField(
         choices = ['Project X',
                    'Project Y']
