@@ -30,105 +30,108 @@ th {
 
 <div style ='background-color:#f5f5f5; border-radius: 25px; padding:20px;'>
     <div class = "modal-body row">
-        <div class = "col-md-6" style = "border-right: 2px solid black">
-            Your are now Participant <strong>A{{  player_id  }}</strong>
-            <table class = "table-bordered"></table>
-                <table class = "table" style ='background-color: white; width: 85%; margin-left: auto; margin-right: auto;'>
-                    <tr style=" border: 1px; border-color:black; border-style:solid;" >
-                      <col width = '160px' />
-                      <col width = '160px' />
-                      <col width = '160px' />
-                      <col width = '160px' />
-                        <th ><strong>Type A Participant</strong></th>
-                        <th>A1</th>
-                        <th>A2</th>
-                        <th>A3</th>
-                    </tr>
-                    <tr style=" border: 1px; border-color:black; border-style:solid;">
-                        <th><strong>Number of Votes</strong></th>
-                        {% if player_id == 1 %}
-                        <th> {{  vote_1  }} (You) </th>
-                        {% else %}
-                        <th> {{ vote_1 }} </th>
-                        {% endif %}
+      <div class = "col-xs-6 col-sm-6 col-md-6 col-lg-6" style = "border-right: 2px solid black">
+        &nbsp;
+        {% if equal_round == True %}
+        <table style ='background-color:  white; '>
+        <tr style = 'border-color:black;border-style:solid'>
+            <th>
+                <p><strong>Project X</strong></p>
+            </th>
+            <th>
+                <p><strong>Project Y</strong></p>
+            </th>
 
-                        {% if player_id == 2 %}
-                        <th> {{  vote_2  }} (You) </th>
-                        {% else %}
-                        <th> {{ vote_2 }} </th>
-                        {% endif %}
+        </tr>
+        <tr style = 'border-color:black;border-style:solid'>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>X</strong></p>
+                <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+            </td>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>Y</strong></p>
+                <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+            </td>
+    </table>
+        {% else %}
+        <table style ='background-color:  white; '>
+        <tr style = 'border-color:black;border-style:solid'>
+            <th>
+                <p><strong>Project X</strong></p>
+            </th>
+            <th>
+                <p><strong>Project Y</strong></p>
+            </th>
 
-                        {% if player_id == 3 %}
-                        <th> {{  vote_3  }} (You) </th>
-                        {% else %}
-                        <th> {{ vote_3 }}</th>
-                        {% endif %}
-
-                    </tr>
-                </table>
-                <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>
-            &nbsp;
-            &nbsp:
-            <p>How do you decide in this situation? Please make your choice.</p>
-            <p>
-
-                &nbsp;
-                {% formfield player.vote with label="Which message will you vote to send to the type B player?" %}
-                &nbsp;
-
-                &nbsp;
-                &nbsp;
-
+        </tr>
+        <tr style = 'border-color:black;border-style:solid'>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>X</strong></p>
+                <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+            </td>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>Y</strong></p>
+                <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+            </td>
         </div>
-        <div class = "col-md-6">
-            &nbsp;
-            {% if equal_round == True %}
-            <table style ='background-color:  white; '>
-            <tr style = 'border-color:black;border-style:solid'>
-                <th>
-                    <p><strong>Project X</strong></p>
-                </th>
-                <th>
-                    <p><strong>Project Y</strong></p>
-                </th>
 
-            </tr>
-            <tr style = 'border-color:black;border-style:solid'>
-                <td style = 'border-color:black;border-style:solid'>
-                    <p> If participant B chooses project <strong>X</strong></p>
-                    <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
-                    <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
-                </td>
-                <td style = 'border-color:black;border-style:solid'>
-                    <p> If participant B chooses project <strong>Y</strong></p>
-                    <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
-                    <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
-                </td>
-        </table>
-            {% else %}
-            <table style ='background-color:  white; '>
-            <tr style = 'border-color:black;border-style:solid'>
-                <th>
-                    <p><strong>Project X</strong></p>
-                </th>
-                <th>
-                    <p><strong>Project Y</strong></p>
-                </th>
 
-            </tr>
-            <tr style = 'border-color:black;border-style:solid'>
-                <td style = 'border-color:black;border-style:solid'>
-                    <p> If participant B chooses project <strong>X</strong></p>
-                    <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
-                    <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
-                </td>
-                <td style = 'border-color:black;border-style:solid'>
-                    <p> If participant B chooses project <strong>Y</strong></p>
-                    <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
-                    <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
-                </td>
         </table>
             {% endif %}
+    </div>
+    <div class = "col-xs-col-sm-6col-md-6 col-lg-6" >
+        Your are now Participant <strong>A{{  player_id  }}</strong>
+        <table class = "table-bordered"></table>
+            <table class = "table" style ='background-color: white; width: 85%; margin-left: auto; margin-right: auto;'>
+                <tr style=" border: 1px; border-color:black; border-style:solid;" >
+                  <col width = '160px' />
+                  <col width = '160px' />
+                  <col width = '160px' />
+                  <col width = '160px' />
+                    <th ><strong>Type A Participant</strong></th>
+                    <th>A1</th>
+                    <th>A2</th>
+                    <th>A3</th>
+                </tr>
+                <tr style=" border: 1px; border-color:black; border-style:solid;">
+                    <th><strong>Number of Votes</strong></th>
+                    {% if player_id == 1 %}
+                    <th> {{  vote_1  }} (You) </th>
+                    {% else %}
+                    <th> {{ vote_1 }} </th>
+                    {% endif %}
+
+                    {% if player_id == 2 %}
+                    <th> {{  vote_2  }} (You) </th>
+                    {% else %}
+                    <th> {{ vote_2 }} </th>
+                    {% endif %}
+
+                    {% if player_id == 3 %}
+                    <th> {{  vote_3  }} (You) </th>
+                    {% else %}
+                    <th> {{ vote_3 }}</th>
+                    {% endif %}
+
+                </tr>
+            </table>
+            <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>
+        &nbsp;
+        &nbsp:
+        <p>How do you decide in this situation? Please make your choice.</p>
+        <p>
+
+            &nbsp;
+            {% formfield player.vote with label="Which message will you vote to send to the type B player? Please make a choice." %}
+            &nbsp;
+
+            &nbsp;
+            &nbsp;
+
     </div>
         &nbsp;
         &nbsp;

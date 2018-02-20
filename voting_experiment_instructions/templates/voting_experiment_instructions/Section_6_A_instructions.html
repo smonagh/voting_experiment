@@ -1,4 +1,5 @@
 {% load otree_tags staticfiles %}
+{% load staticfiles %}
 <style>
 img {
   vertical-align: top;
@@ -32,7 +33,7 @@ th {
 <h3>The procedure on your computer screen</h3>
 
     <p>In each round, the first screen, shown below, informs you that you are
-       Type A participant and that your subject number is A1.  </p>
+       Type A participant and that your identification number is A1.  </p>
     &nbsp;
 
     <div style = 'background-color:white;border-radius: 25px; padding:20px; '>
@@ -57,8 +58,8 @@ th {
             <tr>
 
                 <th><strong>Number of Votes</strong></th>
-                <th> 3 </th>
-                <th> 1 </th>
+                <th> 2 </th>
+                <th> 2 </th>
                 <th> 1 </th>
             </tr>
         </table>
@@ -69,33 +70,30 @@ th {
 </div>
 
     &nbsp;
-  <p>The screen further informs you about the number of votes each Type A
-    participant holds and the number of votes that are required to recommend
-     a project to the Type B participant. This example screen informs you that
-     you have two votes, the sum of the votes of all participants is 5, and that
-      the project that receives at least 3 votes will are recommended to
-       participant B.  </p>
+  <p>This example screen informs you that you (A1) have two votes, A2 has two
+    votes, and A3 has one vote. This example screen informs you that you
+     (A1) have two votes, A2 has two votes, and A3 has one vote. The screen
+      further informs you that the sum of the votes of all participants is 5,
+       and that the project that receives at least 3 votes will are recommended
+        to participant B.   </p>
 
-  <p>The other two Type A participants are A2 and A3. They will seem a similar
-     screen as you, letting them know about their subject number and how many
-      votes they have. Thus, for example, A3 will see the identical screen as
-       you do, with the only exception that that participant is told that he
-       or she has the subject identifier A3. Following the example from the
-        screen above, A3 will learn from his or her screen that she or she has
-         one vote. </p>
+  <p>The other two Type A participants are A2 and A3 will see a similar screen
+     as you, letting them know about their subject number and their number of
+      votes.</p>
   <p>To move on to the next screen, click on “continue”.</p>
 
-  <p>In each round, the second screen informs all Type A participants,
-     including you, you about your earnings for Type A and Type B participants
-      when either Project X or Project Y is implemented. All participants of
-      Type A are informed about the earnings associated with both projects at
-       the same time. </p>
+  <p>After having clicked “continue“ you and the other participants in your
+    group will see the second screen. In each round this second second screen
+     informs you and the other two Type A participants of each of you earnings,
+      in case Type B participant implements either Project X or Project Y. All
+       participants of Type A receive this inforamtion at the same time,
+        and prior to the vote. </p>
 
   <p>Below is an example screen containing the earnings about Projects X and Y.</p>
 
 
     &nbsp;
-
+<!--
     <div style = 'background-color: white;border-radius: 25px; padding:20px;'>
     <div class = "row" >
         &nbsp;
@@ -113,13 +111,13 @@ th {
             <tr style = 'border-color:black; border-style:solid'>
                 <td style = 'border-color:black;border-style:solid'>
                     <p> If participant B chooses project <strong>X</strong></p>
-                    <p>One participant in your group will receive <strong>E$ 16</strong> </p>
+                    <p>Each participant in your group will receive<strong>E$ 16</strong> </p>
                     <p>Player type B will receive <strong>E$ 4</strong></p>
                 </td>
                 <td style = 'border-color:black; border-style:solid'>
                     <p> If participant B chooses project <strong>Y</strong></p>
-                    <p>One participant in your group will receive <strong>E$ 16</strong></p>
-                    <p>Player type B will receive <strong>E$ 4</strong></p>
+                    <p>Each participant in your group will receive<strong>E$ 4</strong></p>
+                    <p>Player type B will receive <strong>E$ 16</strong></p>
                 </td>
         </table>
         &nbsp;
@@ -127,25 +125,20 @@ th {
     </div>
 
 </div>
-
+-->
+<img src="{% static 'voting_experiment_instructions/table_screen.png' %}"
     &nbsp;
     <p>This screen informs you that if project X is chosen to be implemented by
        Type B, each of the Type A participants will earn E$16 and the Type B
         participant will earn E$4.  </p>
 
-    <p>This screen further informs you that if project X is chosen to be
-       implemented by Type B, each of the Type A participants will earn E$4 and
-        the Type B participant will earn E$16.  </p>
+    <p>This screen further informs you that if project Y is chosen to be
+      implemented by Type B, each of the Type A participants will earn E$4
+       and the Type B participant will earn E$16.  </p>
 
     <p>Recall, at the end of the decision making round, one of the three Type
-       A partisans will be randomly chosen to receive the earnings.  </p>
+       A participants will be randomly chosen to receive the earnings.  </p>
 
-    <p>As noted previously, Type B participant has no information about the
-       earnings associated with either of the two projects. Type B participants
-        are also not informed about the procedure (total number of votes, votes
-         assigned to each voter, the 50% majority of votes required for a
-          message to be sent to Type B) by which the group of Type A
-           participants decides on the message to be sent. </p>
 
     <p>To move on to the next screen, click on “continue”. </p>
 
@@ -161,12 +154,15 @@ th {
       for the majority rule procedure to send either Message X or Message Y to
       the Type B participant.  </p>
 
-    <p>To vote whether to send Message X or Message Y to participant B, use
-       the computer mouse to click on that red field which indicates the message
-        which you would like to vote for sending to Type B. your choice.
-         The upper field is for a vote in favor of sending Message X to
-          participant B. The lower field is a vote in favor of sending Message
-          Y to participant B.
+      <p>As noted previously, the Type B participant has no information about
+         the earnings associated with either of the two projects. The Type B
+          participant is also not informed about the procedure (total number of
+           votes, votes assigned to each voter, that a 50% majority of votes is
+            required for a message to be sent to Type B)  </p>
+
+    <p>To vote whether to send Message X or Message Y to participant B,
+       use the computer mouse to click on that red field which indicates the
+        message for which you would like to vote.
     </p>
 
 
@@ -194,17 +190,17 @@ th {
                         <th> 1 </th>
                     </tr>
                 </table>
-                <p> <strong>The project with at least 4 votes </strong> will be recommended to participant B</p>
+                <p> <strong>The project with at least 3 votes </strong> will be recommended to participant B</p>
 
       </div>
     </div>
             &nbsp;
             &nbsp;
       <p>After you have clicked the button for either sending Message X or
-        sending Message Y, you will advance automatically to the next round
-        , where you may be allocated a new identification number,
-         (A1, A2, or A3).  In this new round, you and the other two
-         participants may have different number of votes than in the
-          previous round.
+        sending Message Y, you will advance automatically to the next round,
+        where you and the other two Type A participants may be allocated a new
+        identification number, (A1, A2, or A3). In this new round, you and the
+        other two participants also may have different number of votes than in
+         the previous round. .
       </p>
 </div>

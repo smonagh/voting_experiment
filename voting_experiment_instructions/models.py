@@ -42,7 +42,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    
+
     q_1 = models.CharField(
         choices = ['Project X',
                    'Project Y']
@@ -60,7 +60,7 @@ class Player(BasePlayer):
     q_4 = models.CharField(
         choices = ['in three rounds',
                    'the number is random',
-                   'in all five rounds',
+                   'in all 18 rounds',
                    'in one round']
     )
     q_5 = models.CharField(
