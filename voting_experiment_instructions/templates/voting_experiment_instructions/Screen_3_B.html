@@ -9,6 +9,17 @@
 
     {% include Constants.it3B %}
 
-    {% next_button %}
+      <button id="next" class="btn btn-primary" type='submit' style="display:none;">Next</button>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+$(document).ready(function(){
+  console.log('ready!');
+  $('#next').delay(180000).fadeToggle();
+});
+</script>
 
 {% endblock %}

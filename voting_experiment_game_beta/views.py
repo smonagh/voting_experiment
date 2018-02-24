@@ -3,7 +3,7 @@ from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
 import time
-
+from ast import literal_eval
 
 
 class Voting_stage1(Page):
@@ -90,18 +90,19 @@ class Decision_stage1(Page):
 
 
 class Game_Wait_1(WaitPage):
+
     def after_all_players_arrive(self):
         self.group.total_vote_count()
         self.group.is_moral_cost()
 
 class Game_Wait_2(WaitPage):
+
     def after_all_players_arrive(self):
         self.group.get_player_by_id(4).decision_for_group()
         self.group.set_payoffs()
-        if self.round_number == 19:
+        if self.round_number == 18:
             self.group.set_add_payoffs()
-        for player in self.group.get_players():
-            print(player.payout)
+
 
 
 class Game_Wait_4(WaitPage):
@@ -111,7 +112,7 @@ class Game_Wait_4(WaitPage):
                 return self
 
         def after_all_players_arrive(self):
-            models.Player.followed(self.group)
+            self.group.followed()
 
 
 class MyPage(Page):
@@ -127,7 +128,7 @@ class Game_Wait_3(WaitPage):
             return self
 
     def after_all_players_arrive(self):
-            models.Group.final_payout_return(self.group)
+            self.group.final_payout_return()
 
 
 class Results(Page):
@@ -138,6 +139,10 @@ class Results(Page):
 
     def vars_for_template(self):
         rowlist = []
+        player_payoffs =[]
+        for i,j in enumerate(self.player.in_all_rounds()):
+            if j.payoff_rounds == True:
+                player_payoffs.append(i+1)
 
         for i in range (1,19):
             rowlist.append([i, self.player.in_round(i).vote ,self.group.in_round(i).group_suggestion,
@@ -154,12 +159,12 @@ class Results(Page):
                 y += 1
             y = 0
             x+=1
-        return {'final_payout': self.player.in_round(19).final_payout,
+        return {'final_payout': self.player.final_payout,
                 'us_conversion': self.player.final_us_payout,
-                'belief_payout':self.player.in_round(19).belief_payout,
-                'row_list': rowlist
+                'belief_payout':self.player.in_round(18).belief_payout,
+                'row_list': rowlist,
+                'payoff_rounds':player_payoffs
                 }
-
 
 
 page_sequence = [

@@ -15,8 +15,15 @@
 <div style ='background-color: #f5f5f5;'>
 
     <p> Thank you for participating in the experiment. Please find your results listed below:</p>
-    <!--<p> Your show up fee is: E$12</p>-->
+    <p> You were paid off in the following rounds: </p>
+    {% for payoff in payoff_rounds %}
+    <ul>
+      <li>{{payoff}}</li>
+    </ul>
+    {% endfor %}
+    {% if player.id_in_group < 4 %}
     <p> Your payoff for the belief question is: E${{belief_payout}}</p>
+    {% endif %}
     <p> Your final payoff in experimental dollars is : E${{final_payout}}</p>
     <p> The conversion of currencies is E$6 = US$1</p>
     <p> Your final payoff in $US is : ${{us_conversion}} </p>
@@ -26,7 +33,9 @@
     <table>
         <tr>
             <th>Period</th>
+            {% if player.id_in_group < 4 %}
             <th>Your Vote</th>
+            {% endif %}
             <th>Group Vote</th>
             <th>Final Decision</th>
             <th>Payoff</th>
@@ -34,7 +43,9 @@
         {% for a,b,c,d,e in row_list %}
         <tr>
             <td>{{a}}</td>
+            {% if player.id_in_group < 4%}
             <td>{{b}}</td>
+            {% endif %}
             <td>{{c}}</td>
             <td>{{d}}</td>
             <td>E${{e}}</td>

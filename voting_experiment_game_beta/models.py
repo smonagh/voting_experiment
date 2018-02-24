@@ -28,7 +28,7 @@ class Subsession(BaseSubsession):
         """Assign variables before experiment starts"""
 
         # Randomize individuals into groups
-        if self.round_number < 19:
+        if self.round_number < Constants.num_rounds:
             players = self.get_players()
             random.shuffle(players)
 
@@ -59,7 +59,7 @@ class Subsession(BaseSubsession):
             if self.round_number >6 and self.round_number <10:
                 g.immoral_payoff = 2
                 g.equal_round = True
-            elif self.round_number >15 and self.round_number < 19:
+            elif self.round_number >15 and self.round_number < Constants.num_rounds:
                 g.immoral_payoff = 2
                 g.equal_round = True
             if self.round_number == 1:
@@ -69,7 +69,7 @@ class Subsession(BaseSubsession):
                 self.players_payoff = self.in_round(1).players_payoff
                 self.players_id = self.in_round(1).players_id
             for p in g.get_players():
-                if self.round_number < 19:
+                if self.round_number < Constants.num_rounds:
                     p.assign_id(literal_eval(self.players_id),self.round_number - 1)
                     p.assign_payoff(literal_eval(self.players_payoff),
                     round_list,self.round_number - 1)
@@ -122,7 +122,7 @@ class Subsession(BaseSubsession):
         """Generate index for each of the rounds in the game"""
         my_list = []
 
-        for i in range(1,19):
+        for i in range(1,Constants.num_rounds):
             if i < 4:
                 my_list.append(0)
             elif i > 3 and i < 7:
@@ -133,7 +133,7 @@ class Subsession(BaseSubsession):
                 my_list.append(3)
             elif i > 12 and i < 16:
                 my_list.append(4)
-            elif i > 15 and i < 19:
+            elif i > 15 and i < Constants.num_rounds:
                 my_list.append(5)
             else:
                 pass
@@ -162,6 +162,7 @@ class Group(BaseGroup):
     y_payout = models.PositiveIntegerField()
     total_vote_x = models.PositiveIntegerField()
     total_vote_y = models.PositiveIntegerField()
+
     message_space = models.CharField()
     alpha_average = models.FloatField()
     equal_round = models.BooleanField()
@@ -244,13 +245,18 @@ class Group(BaseGroup):
     def set_payoffs(self):
         """Set player payoffs for round"""
         for player in self.get_players():
-            if player.payoff_rounds:
-                if self.g_final_decision == 0:
+            if self.g_final_decision == 0:
+                if player.id_in_group < 4:
                     player.payout = self.x_payout
-                elif self.g_final_decision == 1:
+                else:
                     player.payout = self.y_payout
-            else:
-                player.payout = 0
+            elif self.g_final_decision == 1:
+                if player.id_in_group < 4:
+                    player.payout = self.y_payout
+                else:
+                    player.payout = self.x_payout
+            print('player_{} payout: '.format(player.id_in_group),player.payout)
+
 
     def set_add_payoffs(self):
         """Add players payoff from bonus question"""
@@ -258,16 +264,14 @@ class Group(BaseGroup):
             if player.participant.vars['role'] == 4:
                 pass
             else:
-                if player.belief_average < self.alpha_average + .02 or player.belief_average > self.alpha_average - .02:
-                    player.payoff += 6
-                    player.belief_payout += 6
-                elif player.belief_average < self.alpha_average + 1 or player.belief_average > self.alpha_average -1:
-                    player.payoff += 2
-                    player.belief_payout += 2
+                print('**************', player.belief_average)
+                print(self.alpha_average)
+                if player.belief_average < self.alpha_average + .02 and player.belief_average > self.alpha_average - .02:
+                    player.belief_payout = 18
+                elif player.belief_average < self.alpha_average + 1 and player.belief_average > self.alpha_average -1:
+                    player.belief_payout = 6
                 else:
-                    player.payoff += 0
-                    player.belief_payout += 0
-
+                    player.belief_payout = 0
 
 
     def make_sugestion(self):
@@ -304,21 +308,25 @@ class Group(BaseGroup):
             player.is_ind_moral_cost(project)
 
     def final_payout_return(self):
+        """
+           Calculate the final payoff for the player. Only Add
+           the rounds in which they are assigned to recieve a
+           payoff
+        """
 
         for player in self.get_players():
             payout_sum = 0
             for p in player.in_previous_rounds():
-                if p.payout is None:
-                    pass
-                else:
-                    print(p.payout)
+                if p.payoff_rounds:
                     payout_sum += p.payout
+            if player.id_in_group < 4:
+                payout_sum += player.in_round(18).belief_payout
 
             player.final_payout = payout_sum
             player.final_us_payout = payout_sum/6
 
     def followed(self):
-        # Find the number of times that they followed
+        """Find the number of times that they followed the group message"""
         alpha_list = []
         for p in self.get_players():
             if p.id_in_group == 4:
@@ -382,7 +390,7 @@ class Player(BasePlayer):
 
     def assign_id(self,player_id,round_number):
         """Assign players rounds in which they are assigned id's"""
-        if self.subsession.round_number < 19:
+        if self.subsession.round_number < Constants.num_rounds:
             if self.participant.vars.get('role') == 4:
                 self.id_in_round = 4
             else:
@@ -392,7 +400,7 @@ class Player(BasePlayer):
 
     def assign_payoff(self,player_payoff,round_list,round_number):
         """Assign players rounds in which they are payed off"""
-        if self.subsession.round_number < 19:
+        if self.subsession.round_number < Constants.num_rounds:
             if self.subsession.round_number == player_payoff['player_{}'.format(
             self.participant.vars['role'])][round_list[round_number]]:
                 self.payoff_rounds = True
