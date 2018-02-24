@@ -46,13 +46,13 @@ th {
         <tr style = 'border-color:black;border-style:solid'>
             <td style = 'border-color:black;border-style:solid'>
                 <p> If participant B chooses project <strong>X</strong></p>
-                <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
-                <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+                <p>Each particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                <p>Participant Type B will receive <strong>E${{x_payout}}</strong></p>
             </td>
             <td style = 'border-color:black;border-style:solid'>
                 <p> If participant B chooses project <strong>Y</strong></p>
-                <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
-                <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+                <p>Each particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                <p>Participant Type B will receive <strong>E${{y_payout}}</strong></p>
             </td>
     </table>
         {% else %}
@@ -69,13 +69,13 @@ th {
         <tr style = 'border-color:black;border-style:solid'>
             <td style = 'border-color:black;border-style:solid'>
                 <p> If participant B chooses project <strong>X</strong></p>
-                <p>One particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
-                <p>Player type B will receive <strong>E${{y_payout}}</strong></p>
+                <p>Each particpant in your group will receive <strong>E${{x_payout}}</strong> </p>
+                <p>Participant Type B will receive <strong>E${{y_payout}}</strong></p>
             </td>
             <td style = 'border-color:black;border-style:solid'>
                 <p> If participant B chooses project <strong>Y</strong></p>
-                <p>One particpant in your group will receive <strong>E${{y_payout}}</strong></p>
-                <p>Player type B will receive <strong>E${{x_payout}}</strong></p>
+                <p>Each particpant in your group will receive <strong>E${{y_payout}}</strong></p>
+                <p>Participant Type B will receive <strong>E${{x_payout}}</strong></p>
             </td>
         </div>
 
@@ -122,11 +122,11 @@ th {
             <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>
         &nbsp;
         &nbsp:
-        <p>How do you decide in this situation? Please make your choice.</p>
+        <p>How do you decide in this situation?</p>
         <p>
 
             &nbsp;
-            {% formfield player.vote with label="Which message will you vote to send to the type B player? Please make a choice." %}
+            {% formfield player.vote with label="Which message do you want to send to the Type B? Please make a choice." %}
             &nbsp;
 
             &nbsp;
