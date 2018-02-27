@@ -57,12 +57,8 @@ class Player(BasePlayer):
         choices = ['Project X',
                    'Project Y']
         )
-    q_4 = models.CharField(
-        choices = ['in three rounds',
-                   'the number is random',
-                   'in all 18 rounds',
-                   'in one round']
-    )
+    q_4 = models.BooleanField()
+    
     q_5 = models.CharField(
         choices = ['Message X: “Project X will earn you more money than Project Y"',
                    'Message Y: “Project Y will earn you more money than Project X”']

@@ -111,7 +111,7 @@ class Comprehension_2(Page):
 
     def error_message(self, values):
         wrong = False
-        if values['q_4'] != 'in one round':
+        if values['q_4'] != True:
             self.player.num_wrong += 1
             wrong = True
 
