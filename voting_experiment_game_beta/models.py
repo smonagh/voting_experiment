@@ -3,6 +3,7 @@ from otree.api import (
     Currency as c, currency_range
 )
 import random
+import math
 from ast import literal_eval
 author = 'Steven Monaghan'
 
@@ -23,6 +24,7 @@ class Subsession(BaseSubsession):
 
     players_payoff = models.CharField()
     players_id = models.CharField()
+    round_order = models.CharField()
 
     def before_session_starts(self):
         """Assign variables before experiment starts"""
@@ -52,16 +54,17 @@ class Subsession(BaseSubsession):
         if self.round_number == 1:
             group_payoff_rounds = self.set_payoff_rounds()
             group_id_rounds = self.set_id_rounds()
+        self.gen_round_order()
         round_list = self.gen_round_list()
+        round_order = self.round_order
+        print(round_order)
         for g in self.get_groups():
             g.immoral_payoff = random.randint(0, 1)
             g.equal_round = False
-            if self.round_number >6 and self.round_number <10:
-                g.immoral_payoff = 2
-                g.equal_round = True
-            elif self.round_number >15 and self.round_number < Constants.num_rounds:
-                g.immoral_payoff = 2
-                g.equal_round = True
+            if round_order[self.round_number - 1] == 1 or \
+               round_order[self.round_number  - 1] == 3:
+               g.immoral_payoff = 2
+               g.equal_round = True
             if self.round_number == 1:
                 self.players_payoff = str(group_payoff_rounds)
                 self.players_id = str(group_id_rounds)
@@ -73,7 +76,7 @@ class Subsession(BaseSubsession):
                     p.assign_id(literal_eval(self.players_id),self.round_number - 1)
                     p.assign_payoff(literal_eval(self.players_payoff),
                     round_list,self.round_number - 1)
-                p.assign_vote(self.round_number)
+                p.assign_vote(self.round_number,round_order)
             g.total_vote_display()
             g.payoff_outcomes()
 
@@ -86,19 +89,18 @@ class Subsession(BaseSubsession):
             for player in [1,2,3,4]:
                 player_list = []
                 if player == 4:
-                    group_value_list = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],
-                                        [13,14,15],[16,17,18]]
+                    group_value_list = [i for i in range(1,19)]
                     # Participant B players are assigned random round in each 6
-                    for i in range(6):
-                        player_list.append(random.choice(group_value_list[i]))
+                    for i in group_value_list:
+                        player_list.append(i)
                     player_payoff['player_4'] = player_list
                 else:
                     # Particpant A players are assigned values from group values list
                     for i in range(6):
+                        player_payoff['player_{}'.format(player)] = player_list
                         val = random.choice(group_value_list[i])
                         player_list.append(val)
                         group_value_list[i].remove(val)
-                    player_payoff['player_{}'.format(player)] = player_list
             return player_payoff
 
     def set_id_rounds(self):
@@ -139,6 +141,19 @@ class Subsession(BaseSubsession):
                 pass
         return my_list
 
+    def gen_round_order(self):
+        """
+        Function generates the rounds that each group will play with
+        in the game
+        """
+        if self.round_number == 1:
+            round_list = [0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,3,3,3]
+            random.shuffle(round_list)
+            round_list.append(99)
+            self.round_order = round_list
+        else:
+            self.round_order = self.in_round(1).round_order
+
 class Group(BaseGroup):
     # Group level data
     immoral_payoff = models.BooleanField(
@@ -176,7 +191,6 @@ class Group(BaseGroup):
             choices = [[0, 'Project X'],
                       [1, 'Project Y']]
     )
-
     #Group level functions
 
     def total_vote_display(self):
@@ -193,15 +207,15 @@ class Group(BaseGroup):
 
         total_x = 0
         total_y = 0
+        round_order = literal_eval(round_order)
 
-        if self.round_number < 10:
+        if self.round_order == 0 or self.round_order == 1:
             for player in self.get_players():
-                print('Less than 10: ',player.id_in_round)
                 if player.vote == 0:
                     total_x += 1
                 elif player.vote == 1:
                     total_y += 1
-        elif self.round_number > 9:
+        elif self.round_order == 2 or self.round_order == 3:
             for player in self.get_players():
                 if player.id_in_round == 1:
                     if player.vote == 0:
@@ -216,10 +230,10 @@ class Group(BaseGroup):
 
         if total_y >= self.vote_to_win:
             self.message_space = "Project Y will earn you more money than Project X"
-            self.group_suggestion = 0
+            self.group_suggestion = 1
         else:
             self.message_space = "Project X will earn you more money than Project Y"
-            self.group_suggestion = 1
+            self.group_suggestion = 0
 
         self.total_vote_x = total_x
         self.total_vote_y = total_y
@@ -323,7 +337,7 @@ class Group(BaseGroup):
                 payout_sum += player.in_round(18).belief_payout
 
             player.final_payout = payout_sum
-            player.final_us_payout = payout_sum/6
+            player.final_us_payout = math.ceil(payout_sum/6)
 
     def followed(self):
         """Find the number of times that they followed the group message"""
@@ -407,13 +421,13 @@ class Player(BasePlayer):
             else:
                 self.payoff_rounds = False
 
-    def assign_vote(self, round_number):
-        if round_number < 10:
+    def assign_vote(self, round_number,round_order):
+        if round_order[round_number - 1] == 0 or round_order[round_number-1] == 2:
             self.vote_weight = 1
             self.group.fill_table_1 = 1
             self.group.fill_table_2 = 1
             self.group.fill_table_3 = 1
-        elif round_number > 9:
+        elif round_order[round_number-1] == 1 or round_order[round_number-1] ==3:
             if self.id_in_round == 1:
                 self.vote_weight = 2
             else:
