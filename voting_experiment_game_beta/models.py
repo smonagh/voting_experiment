@@ -202,20 +202,20 @@ class Group(BaseGroup):
         self.total_vote_in_group = count
         self.vote_to_win = self.total_vote_in_group//2 + 1
 
-    def total_vote_count(self):
+    def total_vote_count(self,round_order):
         """Determine which of the options wins contingent on the votes cast"""
 
         total_x = 0
         total_y = 0
         round_order = literal_eval(round_order)
 
-        if self.round_order == 0 or self.round_order == 1:
+        if round_order == 0 or round_order == 1:
             for player in self.get_players():
                 if player.vote == 0:
                     total_x += 1
                 elif player.vote == 1:
                     total_y += 1
-        elif self.round_order == 2 or self.round_order == 3:
+        elif round_order == 2 or round_order == 3:
             for player in self.get_players():
                 if player.id_in_round == 1:
                     if player.vote == 0:

@@ -92,7 +92,7 @@ class Decision_stage1(Page):
 class Game_Wait_1(WaitPage):
 
     def after_all_players_arrive(self):
-        self.group.total_vote_count()
+        self.group.total_vote_count(self.subsession.round_order)
         self.group.is_moral_cost()
 
 class Game_Wait_2(WaitPage):
