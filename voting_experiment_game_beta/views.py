@@ -36,7 +36,7 @@ class Voting_stage3(Page):
             return self
 
     def vars_for_template(self):
-        print('*************: ',self.group.equal_round)
+
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
                 'vote_1': self.group.in_round(self.round_number).fill_table_1,
                 'vote_2': self.group.in_round(self.round_number).fill_table_2,
@@ -94,6 +94,7 @@ class Game_Wait_1(WaitPage):
     def after_all_players_arrive(self):
         self.group.total_vote_count(self.subsession.round_order)
         self.group.is_moral_cost()
+        print('********: ',self.group.message_space,self.group.group_suggestion)
 
 class Game_Wait_2(WaitPage):
 

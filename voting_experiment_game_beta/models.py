@@ -56,8 +56,7 @@ class Subsession(BaseSubsession):
             group_id_rounds = self.set_id_rounds()
         self.gen_round_order()
         round_list = self.gen_round_list()
-        round_order = self.round_order
-        print(round_order)
+        round_order = literal_eval(self.round_order)
         for g in self.get_groups():
             g.immoral_payoff = random.randint(0, 1)
             g.equal_round = False
@@ -150,7 +149,7 @@ class Subsession(BaseSubsession):
             round_list = [0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,3,3,3]
             random.shuffle(round_list)
             round_list.append(99)
-            self.round_order = round_list
+            self.round_order = str(round_list)
         else:
             self.round_order = self.in_round(1).round_order
 
@@ -208,6 +207,7 @@ class Group(BaseGroup):
         total_x = 0
         total_y = 0
         round_order = literal_eval(round_order)
+        round_order = round_order[self.round_number - 1]
 
         if round_order == 0 or round_order == 1:
             for player in self.get_players():
@@ -269,7 +269,7 @@ class Group(BaseGroup):
                     player.payout = self.y_payout
                 else:
                     player.payout = self.x_payout
-            print('player_{} payout: '.format(player.id_in_group),player.payout)
+
 
 
     def set_add_payoffs(self):
@@ -278,8 +278,6 @@ class Group(BaseGroup):
             if player.participant.vars['role'] == 4:
                 pass
             else:
-                print('**************', player.belief_average)
-                print(self.alpha_average)
                 if player.belief_average < self.alpha_average + .02 and player.belief_average > self.alpha_average - .02:
                     player.belief_payout = 18
                 elif player.belief_average < self.alpha_average + 1 and player.belief_average > self.alpha_average -1:
@@ -297,10 +295,10 @@ class Group(BaseGroup):
         # If player votes are greater than two send y message
         if vote_count >= 2:
             self.message_space = "Project Y"
-            self.group_suggestion = 0
+            self.group_suggestion = 1
         elif vote_count < 2:
             self.message_space = "Project X"
-            self.group_suggestion = 1
+            self.group_suggestion = 0
 
     def is_moral_cost(self):
         """Determine if the suggestion moral or immoral"""
@@ -422,12 +420,12 @@ class Player(BasePlayer):
                 self.payoff_rounds = False
 
     def assign_vote(self, round_number,round_order):
-        if round_order[round_number - 1] == 0 or round_order[round_number-1] == 2:
+        if round_order[round_number - 1] == 0 or round_order[round_number-1] == 1:
             self.vote_weight = 1
             self.group.fill_table_1 = 1
             self.group.fill_table_2 = 1
             self.group.fill_table_3 = 1
-        elif round_order[round_number-1] == 1 or round_order[round_number-1] ==3:
+        elif round_order[round_number-1] == 2 or round_order[round_number-1] ==3:
             if self.id_in_round == 1:
                 self.vote_weight = 2
             else:
