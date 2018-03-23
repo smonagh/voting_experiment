@@ -210,10 +210,6 @@ class Post_Instruction_Page(WaitPage):
 
 
 page_sequence = [
-
-    ]
-
-'''
     Screen_2_A,
     Screen_2_B,
     Screen_3_A,
@@ -228,4 +224,8 @@ page_sequence = [
     Comprehension_6,
     Comprehension_5,
     Post_Instruction_Page
+    ]
+
+'''
+
 '''
