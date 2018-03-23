@@ -146,10 +146,17 @@ class Subsession(BaseSubsession):
         in the game
         """
         if self.round_number == 1:
+            """
+            If the round list is random uncomment this section and comment
+            out the following statement
+
             round_list = [0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,3,3,3]
             random.shuffle(round_list)
             round_list.append(99)
             self.round_order = str(round_list)
+            """
+
+            round_list = [0,3,2,0,0,2,3,1,1,0,2,2,0,2,3,1,0,2]
         else:
             self.round_order = self.in_round(1).round_order
 
