@@ -157,6 +157,7 @@ class Subsession(BaseSubsession):
             """
 
             round_list = [0,3,2,0,0,2,3,1,1,0,2,2,0,2,3,1,0,2,99]
+            self.round_order = str(round_list)
         else:
             self.round_order = self.in_round(1).round_order
 
