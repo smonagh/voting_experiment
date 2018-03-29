@@ -53,6 +53,7 @@ class Subsession(BaseSubsession):
         # Establish group and player parameters
         if self.round_number == 1:
             group_payoff_rounds = self.set_payoff_rounds()
+            self.gen_round_order()
             group_id_rounds = self.set_id_rounds()
         self.gen_round_order()
         round_list = self.gen_round_list()
@@ -112,13 +113,66 @@ class Subsession(BaseSubsession):
                     id_list = [4 for i in range(18)]
                     player_id['player_4'] = id_list
                 elif player < 4 :
-                    for i in range(18):
-                        val = random.choice(group_value_list[i])
-                        id_list.append(val)
-                        group_value_list[i].remove(val)
-                player_id['player_{}'.format(player)] = id_list
+                    my_player = self.grab_player(player)
+                    id_list = []
+                    zero_count = 0
+                    one_count = 0
+                    two_count = 0
+                    three_count = 0
+                    for i in range(0,19):
+                        if literal_eval(self.round_order)[i] == 0:
+                            if my_player.id_in_round == 1:
+                                zero_count +=1
+                            if zero_count < 2:
+                                val = random.choice(group_value_list[i])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                            else:
+                                val = random.choice(group_value_list[i][1:3])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                        elif literal_eval(self.round_order)[i] == 1:
+                            if my_player.id_in_round == 1:
+                                one_count +=1
+                            if one_count < 1:
+                                val = random.choice(group_value_list[i])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                            else:
+                                val = random.choice(group_value_list[i][1:3])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                        elif literal_eval(self.round_order)[i] == 2:
+                            if my_player.id_in_round == 1:
+                                two_count +=1
+                            if two_count < 2:
+                                val = random.choice(group_value_list[i])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                            else:
+                                val = random.choice(group_value_list[i][1:3])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                        elif literal_eval(self.round_order)[i] == 3:
+                            if my_player.id_in_round == 1:
+                                three_count +=1
+                            if three_count < 1:
+                                val = random.choice(group_value_list[i])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
+                            else:
+                                val = random.choice(group_value_list[i][1:3])
+                                id_list.append(val)
+                                group_value_list[i].remove(val)
 
+                player_id['player_{}'.format(player)] = id_list
+                print(player_id)
             return player_id
+
+    def grab_player(self,id_number):
+        for group in self.get_groups():
+            return group.get_player_by_id(id_number)
+
     def gen_round_list(self):
         """Generate index for each of the rounds in the game"""
         my_list = []
@@ -155,10 +209,12 @@ class Subsession(BaseSubsession):
             round_list.append(99)
             self.round_order = str(round_list)
             """
-
+            # For the fixed round procedure in the experiment.
             round_list = [0,3,2,0,0,2,3,1,1,0,2,2,0,2,3,1,0,2,99]
             self.round_order = str(round_list)
+
         else:
+
             self.round_order = self.in_round(1).round_order
 
 class Group(BaseGroup):
@@ -277,7 +333,6 @@ class Group(BaseGroup):
                     player.payout = self.y_payout
                 else:
                     player.payout = self.x_payout
-
 
 
     def set_add_payoffs(self):
@@ -414,6 +469,7 @@ class Player(BasePlayer):
             if self.participant.vars.get('role') == 4:
                 self.id_in_round = 4
             else:
+
                 self.id_in_round = player_id['player_{}'.format(
                 self.participant.vars['role']
                 )][round_number]
