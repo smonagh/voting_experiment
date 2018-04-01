@@ -55,7 +55,8 @@ class Subsession(BaseSubsession):
             group_payoff_rounds = self.set_payoff_rounds()
             self.gen_round_order()
             group_id_rounds = self.set_id_rounds()
-        self.gen_round_order()
+        else:
+            self.gen_round_order()
         round_list = self.gen_round_list()
         round_order = literal_eval(self.round_order)
         for g in self.get_groups():
@@ -112,17 +113,20 @@ class Subsession(BaseSubsession):
                 if player == 4:
                     id_list = [4 for i in range(18)]
                     player_id['player_4'] = id_list
-                elif player < 4 :
+                elif player == 1:
+                    id_list = [1,2,1,2,2,3,1,3,3,3,1,3,3,2,3,1,1,3]
+                elif player == 2:
+                    id_list = [3,1,2,3,1,2,2,1,2,1,3,2,2,1,2,3,2,1]
+                elif player == 3:
+                    id_list = [2,3,3,1,3,1,3,2,1,2,2,1,1,3,1,2,3,2]
+                    '''
                     my_player = self.grab_player(player)
-                    id_list = []
                     zero_count = 0
                     one_count = 0
                     two_count = 0
                     three_count = 0
                     for i in range(0,19):
                         if literal_eval(self.round_order)[i] == 0:
-                            if my_player.id_in_round == 1:
-                                zero_count +=1
                             if zero_count < 2:
                                 val = random.choice(group_value_list[i])
                                 id_list.append(val)
@@ -131,9 +135,9 @@ class Subsession(BaseSubsession):
                                 val = random.choice(group_value_list[i][1:3])
                                 id_list.append(val)
                                 group_value_list[i].remove(val)
+                            if val == 1:
+                                zero_count += 1
                         elif literal_eval(self.round_order)[i] == 1:
-                            if my_player.id_in_round == 1:
-                                one_count +=1
                             if one_count < 1:
                                 val = random.choice(group_value_list[i])
                                 id_list.append(val)
@@ -142,9 +146,9 @@ class Subsession(BaseSubsession):
                                 val = random.choice(group_value_list[i][1:3])
                                 id_list.append(val)
                                 group_value_list[i].remove(val)
+                            if val == 1:
+                                one_count += 1
                         elif literal_eval(self.round_order)[i] == 2:
-                            if my_player.id_in_round == 1:
-                                two_count +=1
                             if two_count < 2:
                                 val = random.choice(group_value_list[i])
                                 id_list.append(val)
@@ -153,9 +157,9 @@ class Subsession(BaseSubsession):
                                 val = random.choice(group_value_list[i][1:3])
                                 id_list.append(val)
                                 group_value_list[i].remove(val)
+                            if val == 1:
+                                two_count += 1
                         elif literal_eval(self.round_order)[i] == 3:
-                            if my_player.id_in_round == 1:
-                                three_count +=1
                             if three_count < 1:
                                 val = random.choice(group_value_list[i])
                                 id_list.append(val)
@@ -164,9 +168,11 @@ class Subsession(BaseSubsession):
                                 val = random.choice(group_value_list[i][1:3])
                                 id_list.append(val)
                                 group_value_list[i].remove(val)
-
+                            if val == 1:
+                                three_count += 1
+                                '''
+                print(id_list)
                 player_id['player_{}'.format(player)] = id_list
-                print(player_id)
             return player_id
 
     def grab_player(self,id_number):
