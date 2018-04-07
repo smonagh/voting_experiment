@@ -136,6 +136,9 @@ class Results(Page):
 
     def is_displayed(self):
         if self.subsession.round_number == 19:
+            print(self.group.get_player_by_id(4).final_payout)
+            for player in self.group.get_player_by_id(4).in_all_rounds():
+                print(player.payoff_rounds)
             return self.player
 
     def vars_for_template(self):

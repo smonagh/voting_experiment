@@ -211,22 +211,22 @@ class Post_Instruction_Page(WaitPage):
 
 
 page_sequence = [
-
+    Screen_2_A,
+    Screen_2_B,
+    Screen_3_A,
+    Screen_3_B,
+    Screen_4_A,
+    Screen_5_A,
+    Section_6_A,
+    Comprehenstion_1,
+    Comprehension_2,
+    Comprehension_3,
+    Comprehension_4,
+    Comprehension_6,
+    Comprehension_5,
+    Post_Instruction_Page
     ]
 
 '''
-Screen_2_A,
-Screen_2_B,
-Screen_3_A,
-Screen_3_B,
-Screen_4_A,
-Screen_5_A,
-Section_6_A,
-Comprehenstion_1,
-Comprehension_2,
-Comprehension_3,
-Comprehension_4,
-Comprehension_6,
-Comprehension_5,
-Post_Instruction_Page
+
 '''

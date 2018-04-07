@@ -91,7 +91,6 @@ class Subsession(BaseSubsession):
                 player_list = []
                 if player == 4:
                     group_value_list = [i for i in range(1,19)]
-                    # Participant B players are assigned random round in each 6
                     for i in group_value_list:
                         player_list.append(i)
                     player_payoff['player_4'] = player_list
@@ -488,6 +487,9 @@ class Player(BasePlayer):
                 self.payoff_rounds = True
             else:
                 self.payoff_rounds = False
+
+        if self.id_in_group == 4:
+            self.payoff_rounds = True
 
     def assign_vote(self, round_number,round_order):
         if round_order[round_number - 1] == 0 or round_order[round_number-1] == 1:
