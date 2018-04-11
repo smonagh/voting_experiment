@@ -94,7 +94,6 @@ class Game_Wait_1(WaitPage):
     def after_all_players_arrive(self):
         self.group.total_vote_count(self.subsession.round_order)
         self.group.is_moral_cost()
-        print('********: ',self.group.message_space,self.group.group_suggestion)
 
 class Game_Wait_2(WaitPage):
 
@@ -136,10 +135,8 @@ class Results(Page):
 
     def is_displayed(self):
         if self.subsession.round_number == 19:
-            print(self.group.get_player_by_id(4).final_payout)
             for player in self.group.get_player_by_id(4).in_all_rounds():
-                print(player.payoff_rounds)
-            return self.player
+                return self.player
 
     def vars_for_template(self):
         rowlist = []

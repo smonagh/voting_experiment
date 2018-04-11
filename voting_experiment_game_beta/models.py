@@ -170,7 +170,7 @@ class Subsession(BaseSubsession):
                             if val == 1:
                                 three_count += 1
                                 '''
-                print(id_list)
+
                 player_id['player_{}'.format(player)] = id_list
             return player_id
 
@@ -353,6 +353,8 @@ class Group(BaseGroup):
                 else:
                     player.belief_payout = 0
 
+            print('set_add_payoffs: ', player.belief_payout)
+
 
     def make_sugestion(self):
         """Make suggestion on the basis of group vote"""
@@ -405,12 +407,17 @@ class Group(BaseGroup):
             player.final_payout = payout_sum
             player.final_us_payout = math.ceil(payout_sum/6)
 
+            if player.id_in_group < 4:
+                print('final payout: ', player.final_payout,
+                    'raw payout: ', player.final_payout - player.in_round(18).belief_payout,
+                    'belief payout: ', player.in_round(18).belief_payout )
+
     def followed(self):
         """Find the number of times that they followed the group message"""
         alpha_list = []
         for p in self.get_players():
             if p.id_in_group == 4:
-                for i in range(1,4):
+                for i in range(1,18):
                     if p.group.in_round(i).group_suggestion == p.group.in_round(i).g_final_decision:
                         alpha_list.append(1)
                     elif p.group.in_round(i).group_suggestion != p.group.in_round(i).g_final_decision:
@@ -418,8 +425,10 @@ class Group(BaseGroup):
 
         # Calculate the average number of times
         alpha_counter = 0
+        print(alpha_list)
         for i in alpha_list:
             alpha_counter += i
+        print(alpha_counter)
         self.alpha_average = alpha_counter
 
 
