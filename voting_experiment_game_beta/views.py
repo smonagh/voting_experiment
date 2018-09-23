@@ -2,7 +2,7 @@ from otree.api import Currency as c, currency_range, safe_json
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
-import time
+import random
 from ast import literal_eval
 
 
@@ -10,37 +10,58 @@ class Voting_stage1(Page):
 
     def is_displayed(self):
         player_id_list = [x * 4 for x in range(0, 12)]
-        if self.player.id_in_group not in player_id_list and self.subsession.round_number<19:
+        if self.player.id_in_group not in player_id_list and self.subsession.round_numbe < Constants.num_rounds:
 
             return self.player
 
     def vars_for_template(self):
+        treatment = literal_eval(Constants.round_order)[self.round_number]
+        treatment_dict = literal_eval(Constants.treatment_dict)
+        if treatment == 1:
+            if self.player.id_in_group:
+                vote_display = random.randint(1, 2)
+            else:
+                vote_display = random.randint(3, 5)
+        elif treatment == 2:
+            if self.player.id_in_group:
+                vote_display = 3
+            else:
+                vote_display = 1
+        else:
+            vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'vote_1': self.group.in_round(self.round_number).fill_table_1,
-                'vote_2': self.group.in_round(self.round_number).fill_table_2,
-                'vote_3': self.group.in_round(self.round_number).fill_table_3,
+                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,
                 'x_payout': self.group.x_payout,
                 'y_payout': self.group.y_payout}
 
-class Voting_stage2(Voting_stage1):
-    pass
-
-
 class Voting_stage3(Page):
     def is_displayed(self):
         player_id_list = [x * 4 for x in range(0, 12)]
-        if self.player.id_in_group not in player_id_list and self.subsession.round_number < 19:
+        if self.player.id_in_group not in player_id_list and self.subsession.round_number < Constants.num_rounds:
             return self
 
     def vars_for_template(self):
-
+        treatment = literal_eval(Constants.round_order)[self.round_number]
+        treatment_dict = literal_eval(Constants.treatment_dict)
+        if treatment == 1:
+            if self.player.id_in_group:
+                vote_display = random.randint(1,2)
+            else:
+                vote_display = random.randint(3,5)
+        elif treatment == 2:
+            if self.player.id_in_group:
+                vote_display = 3
+            else:
+                vote_display = 1
+        else:
+            vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'vote_1': self.group.in_round(self.round_number).fill_table_1,
-                'vote_2': self.group.in_round(self.round_number).fill_table_2,
-                'vote_3': self.group.in_round(self.round_number).fill_table_3,
+                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,
@@ -56,17 +77,30 @@ class Voting_stage3_2(Page):
     def is_displayed(self):
         player_id_list = [x * 4 for x in range(0, 12)]
         if (self.subsession.round_number == 18) and\
-                self.player.id_in_group not in player_id_list and self.subsession.round_number<19:
+                self.player.id_in_group not in player_id_list and self.subsession.round_number < Constants.num_rounds:
             return self
 
     form_model = models.Player
     form_fields = ['belief_average']
-
     def vars_for_template(self):
+        treatment = literal_eval(Constants.round_order)[self.round_number]
+        treatment_dict = literal_eval(Constants.treatment_dict)
+        if treatment == 1:
+            if self.player.id_in_group:
+                vote_display = random.randint(1, 2)
+            else:
+                vote_display = random.randint(3, 5)
+        elif treatment == 2:
+
+            if self.player.id_in_group:
+                vote_display = 3
+            else:
+                vote_display = 1
+        else:
+            vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'vote_1': self.group.in_round(self.round_number).fill_table_1,
-                'vote_2': self.group.in_round(self.round_number).fill_table_2,
-                'vote_3': self.group.in_round(self.round_number).fill_table_3,
+                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,
@@ -78,7 +112,7 @@ class Decision_stage1(Page):
 
     def is_displayed(self):
         player_id_list = [x * 4 for x in range(0, 12)]
-        if self.player.id_in_group in player_id_list and self.subsession.round_number<19:
+        if self.player.id_in_group in player_id_list and self.subsession.round_number< Constants.num_rounds:
             return self.player
 
     def vars_for_template(self):
@@ -98,9 +132,9 @@ class Game_Wait_1(WaitPage):
 class Game_Wait_2(WaitPage):
 
     def after_all_players_arrive(self):
-        self.group.get_player_by_id(4).decision_for_group()
+        self.group.get_player_by_id(Constants.players_per_group).decision_for_group()
         self.group.set_payoffs()
-        if self.round_number == 18:
+        if self.round_number == Constants.num_rounds - 1:
             self.group.set_add_payoffs()
 
 
@@ -108,7 +142,7 @@ class Game_Wait_2(WaitPage):
 class Game_Wait_4(WaitPage):
 
         def is_displayed(self):
-            if self.subsession.round_number == 18:
+            if self.subsession.round_number == Constants.num_rounds - 1:
                 return self
 
         def after_all_players_arrive(self):
@@ -117,14 +151,14 @@ class Game_Wait_4(WaitPage):
 
 class MyPage(Page):
     def is_displayed(self):
-        if self.subsession.round_number == 19:
+        if self.subsession.round_number == Constants.num_rounds:
             return self.player
     form_model = models.Player
     form_fields = ['age','field','gender']
 
 class Game_Wait_3(WaitPage):
     def is_displayed(self):
-        if self.subsession.round_number == 19:
+        if self.subsession.round_number == Constants.num_rounds:
             return self
 
     def after_all_players_arrive(self):
@@ -134,20 +168,19 @@ class Game_Wait_3(WaitPage):
 class Results(Page):
 
     def is_displayed(self):
-        if self.subsession.round_number == 19:
-            for player in self.group.get_player_by_id(4).in_all_rounds():
-                return self.player
+        if self.subsession.round_number == Constants.num_rounds:
+            return self.player
 
     def vars_for_template(self):
         rowlist = []
         player_payoffs =[]
-        for i,j in enumerate(self.player.in_all_rounds()):
-            if j.payoff_rounds == True:
+        for i, j in enumerate(self.player.in_all_rounds()):
+            if j.payoff_rounds:
                 player_payoffs.append(i+1)
 
-        for i in range (1,19):
-            rowlist.append([i, self.player.in_round(i).vote ,self.group.in_round(i).group_suggestion,
-                           self.group.in_round(i).g_final_decision,self.player.in_round(i).payout])
+        for i in range(1, Constants.num_rounds):
+            rowlist.append([i, self.player.in_round(i).vote, self.group.in_round(i).group_suggestion,
+                           self.group.in_round(i).g_final_decision, self.player.in_round(i).payout])
         x = 0
         y = 0
         for i in rowlist:
@@ -159,12 +192,13 @@ class Results(Page):
                         rowlist[x][y] = 'Project Y'
                 y += 1
             y = 0
-            x+=1
+            x += 1
+
         return {'final_payout': self.player.final_payout,
                 'us_conversion': self.player.final_us_payout,
-                'belief_payout':self.player.in_round(18).belief_payout,
+                'belief_payout': self.player.in_round(Constants.num_rounds - 1).belief_payout,
                 'row_list': rowlist,
-                'payoff_rounds':player_payoffs
+                'payoff_rounds': player_payoffs
                 }
 
 

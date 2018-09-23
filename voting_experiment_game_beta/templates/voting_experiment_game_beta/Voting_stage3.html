@@ -99,24 +99,13 @@ th {
                 </tr>
                 <tr style=" border: 1px; border-color:black; border-style:solid;">
                     <th><strong>Number of Votes</strong></th>
-                    {% if player_id == 1 %}
-                    <th> {{  vote_1  }} (You) </th>
-                    {% else %}
-                    <th> {{ vote_1 }} </th>
-                    {% endif %}
-
-                    {% if player_id == 2 %}
-                    <th> {{  vote_2  }} (You) </th>
-                    {% else %}
-                    <th> {{ vote_2 }} </th>
-                    {% endif %}
-
-                    {% if player_id == 3 %}
-                    <th> {{  vote_3  }} (You) </th>
-                    {% else %}
-                    <th> {{ vote_3 }}</th>
-                    {% endif %}
-
+                    {% for vote in votes %}
+                        {% if vote_display == loop.counter %}
+                            {{vote}} <h3>(You)</h3>
+                        {% else %}
+                            {{vote}}
+                        {% endif %}
+                    {% endfor %}
                 </tr>
             </table>
             <p> <strong>The project with at least {{  votes_to_win  }} votes </strong> will be recommended to participant B</p>

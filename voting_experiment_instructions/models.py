@@ -11,7 +11,7 @@ Voting instructions
 
 class Constants(BaseConstants):
     name_in_url = 'voting_experiment_instructions'
-    players_per_group = 4
+    players_per_group = 6
     num_rounds = 1
     show_up_fee = 5
     conversion_rate = 0.5
@@ -31,11 +31,8 @@ class Subsession(BaseSubsession):
     def before_session_starts(self):
 
         'Define if player is a type A or type B player'
-        for g in self.get_groups():
-            g.get_player_by_id(1).participant.vars['role'] = 1
-            g.get_player_by_id(2).participant.vars['role'] = 2
-            g.get_player_by_id(3).participant.vars['role'] = 3
-            g.get_player_by_id(4).participant.vars['role'] = 4
+        for i, group in enumerate(self.get_groups()):
+            group.get_player_by_id(i).participant.vars['role'] = i
 
 class Group(BaseGroup):
     pass
