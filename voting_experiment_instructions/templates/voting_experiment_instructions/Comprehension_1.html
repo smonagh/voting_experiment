@@ -1,0 +1,35 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Comprehension Questions
+{% endblock %}
+
+{% block content %}
+<div class="instructions well well-lg" style="">
+    <p>Please answer the following comprehension questions. The questions ensure that you are familiar with the procedures of the study. The questions chosen here (as well as in all examples in the instructions) were chosen randomly. Your answers to the comprehension questions do not affect your payment at the end of the study.</p>
+    <table>
+        <tr style = 'border-color:black;border-style:solid'>
+        <th style = 'border-color:black;border-style:solid'> Project X</th>
+        <th> Project Y</th>
+        </tr>
+    <tr style = 'border-color:black;border-style:solid'>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>X</strong></p>
+                <p>Each particpant in your group will receive <strong>E$8</strong> </p>
+                <p>Participant Type B will receive <strong>E$12</strong></p>
+            </td>
+            <td style = 'border-color:black;border-style:solid'>
+                <p> If participant B chooses project <strong>Y</strong></p>
+                <p>Each particpant in your group will receive <strong>E$12</strong></p>
+                <p>Participant Type B will receive <strong>E$8</strong></p>
+            </td>
+    </tr>
+        </table>
+    {% formfield player.q_1 with label="Which project gives you as a Type A the highest payment? : " %}
+    {% formfield player.q_2 with label="How much is the payment? : " %}
+    {% formfield player.q_3 with label="Which Project yields the highest payment for participant B? : " %}
+
+</div>
+{% next_button %}
+{% endblock %}

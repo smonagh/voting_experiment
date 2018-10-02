@@ -28,11 +28,16 @@ class Constants(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    def before_session_starts(self):
 
-        'Define if player is a type A or type B player'
-        for i, group in enumerate(self.get_groups()):
-            group.get_player_by_id(i).participant.vars['role'] = i
+    def creating_session(self):
+        for player in self.get_players():
+            for i in range(1, Constants.players_per_group + 1):
+                if player.id_in_group == i:
+                    player.participant.vars['id'] = i
+
+
+
+
 
 class Group(BaseGroup):
     pass
@@ -45,42 +50,48 @@ class Player(BasePlayer):
                    'Project Y']
     )
     q_2 = models.CharField(
-        choices=['E$15',
-                 'E$8',
-                 'E$12',
-                 'E$7']
+        choices = ['E$8',
+                   'E$12']
     )
+
     q_3 = models.CharField(
         choices = ['Project X',
                    'Project Y']
         )
-    q_4 = models.BooleanField()
 
+    q_4 = models.CharField(
+        choices = ['Message X: "Project X will earn you more money than Project Y"',
+                   'Message Y: "Project Y will earn you more money than Project X"']
+    )
     q_5 = models.CharField(
-        choices = ['Message X: “Project X will earn you more money than Project Y"',
-                   'Message Y: “Project Y will earn you more money than Project X”']
+        choices = ['Message X: "Project X will earn you more money than Project Y"',
+                   'Message Y: "Project Y will earn you more money than Project X"']
     )
     q_6 = models.CharField(
-        choices = ['Message X: “Project X will earn you more money than Project Y"',
-                   'Message Y: “Project Y will earn you more money than Project X”']
-    )
-    q_7 = models.CharField(
         choices=['Message X: “Project X will earn you more money than Project Y"',
                  'Message Y: “Project Y will earn you more money than Project X”']
     )
-    q_8 = models.CharField(
+    q_7 = models.CharField(
         choices=['Message X: “Project X will earn you more money than Project Y"',
                  'Message Y: “Project Y will earn you more money than Project X"']
     )
     q_9 = models.CharField(
-    choices=['False','True']
+    choices=['False', 'True']
     )
-    q_10 = models.CharField(
+    q_8 = models.CharField(
     widget=widgets.RadioSelect,
     choices = [
         'Only the decision that you make',
         'Only the decisions that other participants make',
         'The decision that you make, the decisions that other participants make, and who among the three Type A participants in a given round is randomly selected to earn the money that is associated with the project that the Type B participant chose to implement']
+    )
+
+    decision_field = models.CharField(
+        widget=widgets.RadioSelect,
+        choices = [
+            'Project X',
+            'Project Y'
+        ]
     )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()

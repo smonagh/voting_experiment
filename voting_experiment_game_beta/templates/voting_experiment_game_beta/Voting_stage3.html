@@ -32,7 +32,7 @@ th {
     <div class = "modal-body row">
       <div class = "col-xs-6 col-sm-6 col-md-6 col-lg-6" style = "border-right: 2px solid black">
         &nbsp;
-        {% if equal_round == True %}
+        {% if conflict_round == False %}
         <table style ='background-color:  white; '>
         <tr style = 'border-color:black;border-style:solid'>
             <th>
@@ -88,22 +88,22 @@ th {
         <table class = "table-bordered"></table>
             <table class = "table" style ='background-color: white; width: 85%; margin-left: auto; margin-right: auto;'>
                 <tr style=" border: 1px; border-color:black; border-style:solid;" >
-                  <col width = '160px' />
-                  <col width = '160px' />
-                  <col width = '160px' />
-                  <col width = '160px' />
+                    <col width = '160px' />
+                    {% for vote in votes %}
+                        <col width = '160px' />
+                    {% endfor %}
                     <th ><strong>Type A Participant</strong></th>
-                    <th>A1</th>
-                    <th>A2</th>
-                    <th>A3</th>
+                    {% for vote in votes %}
+                        <th>A{{ forloop.counter }}</th>
+                    {% endfor %}
                 </tr>
                 <tr style=" border: 1px; border-color:black; border-style:solid;">
                     <th><strong>Number of Votes</strong></th>
                     {% for vote in votes %}
-                        {% if vote_display == loop.counter %}
-                            {{vote}} <h3>(You)</h3>
+                        {% if vote_display == forloop.counter %}
+                            <th>{{vote}} <p>(You)</p> </th>
                         {% else %}
-                            {{vote}}
+                            <th>{{vote}}</th>
                         {% endif %}
                     {% endfor %}
                 </tr>

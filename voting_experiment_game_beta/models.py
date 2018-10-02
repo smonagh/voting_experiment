@@ -16,24 +16,24 @@ class Constants(BaseConstants):
     players_per_group = 6
     num_rounds = 31
     show_up_fee = 0
-    conversion_rate = 0
+    conversion_rate = 2
     treatments = 3
-    treatment_dict = '{}'
-    players_id = '{}'
-    round_order = '[]'
-    group_id_rounds = '{}'
-    group_payoff_rounds = '{}'
-    group_conflict_rounds = '[]'
-    tracker_dict = '{}'
 
 
 class Subsession(BaseSubsession):
+    treatment_dict = models.LongStringField(initial='{}')
+    players_id = models.LongStringField(initial='{}')
+    round_order = models.LongStringField(initial='[]')
+    group_id_rounds = models.LongStringField(initial='{}')
+    group_payoff_rounds = models.LongStringField(initial='{}')
+    group_conflict_rounds = models.LongStringField(initial='[]')
+    tracker_dict = models.LongStringField(initial='{}')
+    followed_average = models.IntegerField()
 
-    def before_session_starts(self):
+    def creating_session(self):
         """Assign variables before experiment starts"""
 
         self.randomize_players()
-        self.establish_groups()
         self.establish_parameters()
 
     def randomize_players(self):
@@ -44,57 +44,63 @@ class Subsession(BaseSubsession):
         if self.round_number == 1:
             self.gen_payment_rounds()
 
+        self.group_payoff_rounds = self.in_round(1).group_payoff_rounds
         self.assign_player_payoff_rounds()
-        if self.round_number < Constants.num_rounds:
+        players_dict = {'player_{}'.format(i): [] for i in range(1, Constants.players_per_group + 1)}
+        if self.round_number <= Constants.num_rounds:
             players = self.get_players()
             random.shuffle(players)
-
-            players_dict = {'player_{}': [] for i in range(1, Constants.players_per_group + 1)}
             for player in players:
-                players_dict['player_{}'.format(player.participant.vars['role'])].append(player)
+                players_dict['player_{}'.format(player.participant.vars['id'])].append(player)
 
-        Constants.players_id = str(players_dict)
-
-    def establish_groups(self):
-        """
-        Establish groups for each round in the game
-        """
-        players_dict = literal_eval(Constants.players_id)
         group_matrix = []
         while players_dict['player_1']:
             new_group = [players_dict['player_{}'.format(i)].pop() for i in range(1, Constants.players_per_group + 1)]
             group_matrix.append(new_group)
 
+        self.players_id = str(players_dict)
         self.set_group_matrix(group_matrix)
 
     def establish_parameters(self):
 
-        # Establish group and player parameters
-        if self.round_number == 1:
+        # Establish group and player parameters if not the last round
+        if self.round_number < Constants.num_rounds:
             self.parameters_for_game()
-
-        for group in self.get_groups():
-            group.assign_rounds()
-            group.assign_payoff_rounds()
-            group.assign_vote_weight
-            group.conflict_round()
-            group.assign_vote_to_win()
-            group.immoral_payoff = random.randint(0, 1)
-            group.assign_relative_payouts()
+            self.group_parameters()
 
     def parameters_for_game(self):
-        self.set_payoff_rounds()
-        self.gen_round_order()
-        self.gen_tracker_dict()
-        self.set_id_rounds()
-        self.set_conflict_rounds()
+        if self.round_number == 1:
+            self.set_treatments()
+            self.gen_payment_rounds()
+            self.gen_round_order()
+            self.gen_tracker_dict()
+            self.set_id_rounds()
+            self.set_conflict_rounds()
+        else:
+            self.treatment_dict = self.in_round(1).treatment_dict
+            self.players_id = self.in_round(1).players_id
+            self.round_order = self.in_round(1).round_order
+            self.group_id_rounds = self.in_round(1).group_id_rounds
+            self.group_payoff_rounds = self.in_round(1).group_payoff_rounds
+            self.group_conflict_rounds = self.in_round(1).group_conflict_rounds
+            self.tracker_dict = self.in_round(1).tracker_dict
+
+    def group_parameters(self):
+        for group in self.get_groups():
+            group.assign_ids()
+            group.assign_vote_weight()
+            group.assign_conflict_round()
+            group.assign_vote_to_win()
+            group.immoral_payoff = random.randint(0, 1)
+            group.assign_relative_payout()
+
 
     def set_treatments(self):
         """
         Define treatments for the game.
         """
 
-        treatment_dict = literal_eval(Constants.treatment_dict)
+        treatment_dict = literal_eval(self.treatment_dict)
         for i in range(1, Constants.treatments + 1):
             if i == 1:
                 treatment_dict['treatment_1'] = {'votes': [2, 2, 1, 1, 1], 'quota': 5,
@@ -106,7 +112,7 @@ class Subsession(BaseSubsession):
                 treatment_dict['treatment_3'] = {'votes': [1, 1, 1, 1, 1], 'quota': 3,
                                                  'high': 10, 'conflict': 5, 'num_high': 5}
 
-        Constants.treatment_dict = str(treatment_dict)
+        self.treatment_dict = str(treatment_dict)
 
     def gen_round_order(self):
         """
@@ -118,38 +124,38 @@ class Subsession(BaseSubsession):
             ((Constants.num_rounds - 1)/Constants.treatments))
         random.shuffle(round_order)
 
-        Constants.round_order = str(round_order)
+        self.round_order = str(round_order)
 
 
     def gen_payment_rounds(self):
         """
         Generates the rounds in which payers are paid on for each player
         """
-        payoff_dict = literal_eval(Constants.group_payoff_rounds)
+        payoff_dict = literal_eval(self.group_payoff_rounds)
 
-        for index, player in enumerate(self.get_players):
-            index += 1
-            if player.id_in_group == 6:
-                payoff_dict['player_{}'.format(index)] = [i for i in range(1, Constants.num_rounds)]
+        for index, player in enumerate(self.get_players()):
+            if player.id_in_group == Constants.players_per_group:
+                payoff_dict['player_{}'.format(player.id_in_group)] = [i for i in range(1, Constants.num_rounds)]
             else:
                 payoff_list = []
                 while len(payoff_list) != 6:
                     rand_num = random.randint(1, 31)
                     if rand_num not in payoff_list:
-                        payoff_list.append(random.randint(rand_num))
+                        payoff_list.append(rand_num)
 
-        Constants.group_payoff_rounds = str(payoff_dict)
+                payoff_dict['player_{}'.format(player.id_in_group)] = payoff_list
+
+        self.group_payoff_rounds = str(payoff_dict)
 
     def assign_player_payoff_rounds(self):
         """
         If round number is equal to the to the number contained in the payoff dictionary
         set the players payoff for the round to true.
         """
-        payoff_dict = literal_eval(Constants.group_payoff_rounds)
+        payoff_dict = literal_eval(self.group_payoff_rounds)
 
-        for index, player in enumerate(self.get_players()):
-            index += 1
-            payoff_list = payoff_dict['player_{}'.format(index)]
+        for player in self.get_players():
+            payoff_list = payoff_dict['player_{}'.format(player.id_in_group)]
             if self.round_number in payoff_list:
                 player.payoff_rounds = True
             else:
@@ -160,17 +166,17 @@ class Subsession(BaseSubsession):
         Generate a dictionary that is used to track player assignment to rounds
         """
 
-        tracker_dict = literal_eval(Constants.tracker_dict)
+        tracker_dict = literal_eval(self.tracker_dict)
         for player in range(1, Constants.players_per_group + 1):
             tracker_dict['player_{}'.format(player)] = {}
 
         for value in tracker_dict.values():
-            for treatment in range(1, Constants.treatments):
-                value['treatment_{}'.format(treatment)]['id'] = [None for i in range(Constants.num_rounds)]
-                value['treatment_{}'.format(treatment)]['payoff'] = [None for i in range(Constants.num_rounds)]
+            for treatment in range(1, Constants.treatments + 1):
+                value['treatment_{}'.format(treatment)] = {}
+                value['treatment_{}'.format(treatment)]['id'] = [0] * (Constants.num_rounds - 1)
+                value['treatment_{}'.format(treatment)]['payoff'] = [0] * (Constants.num_rounds - 1)
 
-        Constants.tracker_dict = str(tracker_dict)
-
+        self.tracker_dict = str(tracker_dict)
 
     def set_conflict_rounds(self):
         """
@@ -186,42 +192,73 @@ class Subsession(BaseSubsession):
                     cur_round)]['conflict']:
                 conflict_rounds.append(False)
             else:
-                result = self.check_lower_bound(cur_round, conflict_tracker['treatment_{}'.format(cur_round)])
+                result = self.check_lower_bound(cur_round, treatment_dict)
                 conflict_rounds.append(result)
                 conflict_tracker['treatment_{}'.format(cur_round)] += result
 
-        Constants.conflict_rounds = str(conflict_rounds)
+        self.group_conflict_rounds = str(conflict_rounds)
+
+    def check_lower_bound(self, cur_round, treatment_dict):
+        """
+        Make sure that result is assigned true if there are too few rounds left in the game to
+        assign a true statement
+        """
+        num_conflict = treatment_dict['treatment_{}'.format(cur_round)]['conflict']
+        remainder = (Constants.num_rounds - 1) - self.round_number
+
+        if num_conflict - remainder == 0:
+            result = True
+        else:
+            result = np.random.choice([False, True])
+
+        return result
 
     def set_id_rounds(self):
         """
         Define each players id in the group for each round in the game
         """
-        tracker_dict = literal_eval(Constants.tracker_dict)
-        round_order = literal_eval(Constants.round_order)
+        tracker_dict = literal_eval(self.tracker_dict)
+        round_order = literal_eval(self.round_order)
 
         for i, current_round in enumerate(round_order):
-            check = False
-            while not check:
+            check = True
+            while check:
                 sample_list = [i for i in range(1, Constants.players_per_group)]
+                sample = np.random.choice(sample_list, 5, replace=False)
                 for player_num in range(1, Constants.players_per_group):
-                    sample = np.random.choice(sample_list, replace=False)
-                    tracker_dict['player_{}'.format(player_num)]['treatment_{}'.format(current_round)]['id'][i] = sample
+                    tracker_dict['player_{}'.format(player_num)]['treatment_{}'.format(
+                        current_round)]['id'][i] = sample[player_num - 1]
 
-                check = self.check_max_id_condition(current_round, tracker_dict)
-            tracker_dict['player_{}'.format(
-                Constants.players_per_group)]['treatment_{}'.format(
-                    current_round)]['id'][i] = Constants.players_per_group
+                check, tracker_dict = self.check_max_id_condition(current_round, tracker_dict)
+        self.tracker_dict = str(tracker_dict)
+        self.set_group_id(tracker_dict)
 
-        Constants.tracker_dict = str(tracker_dict)
+    def set_group_id(self, tracker_dict):
+        """
+        Consolidate the three indices into one by ignoring zero values contained in the tracker dict
+        """
+        group_id_rounds = literal_eval(self.group_id_rounds)
+        for player in range(1, Constants.players_per_group):
+            player_list = []
+            for cur_round in range(1, Constants.num_rounds - 1):
+                for treatment in range(1, Constants.treatments + 1):
+                    if tracker_dict['player_{}'.format(player)]['treatment_{}'.format(treatment)]['id'][cur_round] > 0:
+                        player_list.append(tracker_dict['player_{}'.format(player)][
+                                               'treatment_{}'.format(treatment)]['id'][cur_round])
+            group_id_rounds['player_{}'.format(player)] = player_list
+
+        group_id_rounds['player_6'] = [6] * Constants.num_rounds
+
+        self.group_id_rounds = str(group_id_rounds)
 
     def check_max_id_condition(self, current_round, tracker_dict):
         """
         Check to make sure that players have not been assigned to the max position in round list more than the times
         that they are allowed to occupy that position.
         """
-        treatment_dict = literal_eval(Constants.treatment_dict)
+        treatment_dict = literal_eval(self.treatment_dict)
         num_high = treatment_dict['treatment_{}'.format(current_round)]['num_high']
-        rounds_high = treatment_dict['treatment_{}'.format(current_round)]['rounds_high']
+        high = treatment_dict['treatment_{}'.format(current_round)]['high']
 
         check = False
         for player_num in range(1, Constants.players_per_group):
@@ -231,10 +268,51 @@ class Subsession(BaseSubsession):
             for player_id in count_list:
                 if player_id in range(1, num_high + 1):
                     count += 1
-            if count >= rounds_high:
+            if count > high:
                 check = True
 
-        return check
+        return check, tracker_dict
+
+    def final_payoff_return(self):
+        group_payoff_rounds = literal_eval(self.group_payoff_rounds)
+        for player in self.get_players():
+            final_payoff = 0
+            for prev in player.in_previous_rounds():
+                if prev.payout and prev.round_number in group_payoff_rounds['player_{}'.format(player.id_in_group)]:
+                    final_payoff += prev.payout
+
+            if player.belief_payout:
+                player.final_payout = final_payoff + player.belief_payout
+            else:
+                player.final_payout = final_payoff
+            player.final_us_payout = final_payoff/Constants.conversion_rate
+
+    def set_followed_average(self):
+
+        decision_list = self.get_decision_makers()
+        average_list = []
+        for player in decision_list:
+            followed_sum = 0
+            for prev_play in player.in_previous_rounds():
+                add = 0
+                if prev_play.followed:
+                    add = 1
+                followed_sum += add
+
+            average_list.append(followed_sum/(Constants.num_rounds - 1))
+
+        self.followed_average = sum(average_list)/len(decision_list)
+        return self.followed_average
+
+    def get_decision_makers(self):
+        """Return a list containing the decision makers in the subsession"""
+
+        decision_maker_list = []
+        for player in self.get_players():
+            if player.id_in_group == Constants.players_per_group:
+                decision_maker_list.append(player)
+
+        return decision_maker_list
 
 class Group(BaseGroup):
     # Group level data
@@ -274,15 +352,17 @@ class Group(BaseGroup):
         """
         Assign players id in round for each player in the game
         """
-        group_id_rounds = literal_eval(Constants.group_id_rounds)
-        for i, player in enumerate(self.get_players()):
-            player.id_in_round = group_id_rounds['player_{}'.format(i)][self.round_number - 1]
+        group_id_rounds = literal_eval(self.subsession.group_id_rounds)
+        if self.round_number != Constants.num_rounds:
+            for i, player in enumerate(self.get_players()):
+                i += 1
+                player.id_in_round = group_id_rounds['player_{}'.format(i)][self.round_number - 2]
 
     def assign_payoff_rounds(self):
         """
         Assign players payoff rounds for each player in the game
         """
-        group_payoff_rounds = literal_eval(Constants.group_payoff_rounds)
+        group_payoff_rounds = literal_eval(self.subsession.group_payoff_rounds)
         for i, player in enumerate(self.get_players()):
             player.payoff_rounds = group_payoff_rounds['player_{}'.format(i)][self.round_number - 1]
 
@@ -290,8 +370,8 @@ class Group(BaseGroup):
         """
         Assign player vote weight for each player in the game
         """
-        treatment_in_round = literal_eval(Constants.round_order)[self.round_number - 1]
-        treatment_info = literal_eval(Constants.treatment_dict)['treatment_{}'.format(treatment_in_round)]
+        treatment_in_round = literal_eval(self.subsession.round_order)[self.round_number - 2]
+        treatment_info = literal_eval(self.subsession.treatment_dict)['treatment_{}'.format(treatment_in_round)]
 
         for player in self.get_players():
             if player.id_in_round:
@@ -300,8 +380,10 @@ class Group(BaseGroup):
                 player.vote_weight = 1
 
     def assign_vote_to_win(self):
+        round_order = literal_eval(self.subsession.round_order)
+        cur_round = round_order[self.round_number - 2]
         self.vote_to_win = literal_eval(
-            Constants.treatment_dict)['treatment_{}'.format(self.round_number - 1)]['quota']
+            self.subsession.treatment_dict)['treatment_{}'.format(cur_round)]['quota']
 
     def assign_moral_cost(self):
         """
@@ -330,7 +412,7 @@ class Group(BaseGroup):
         """
         Determine if there is conflict in a given round or not
         """
-        conflict_round = literal_eval(Constants.group_conflict_rounds)[self.round_number - 1]
+        conflict_round = literal_eval(self.subsession.group_conflict_rounds)[self.round_number - 2]
         self.conflict_round = conflict_round
 
     def assign_relative_payout(self):
@@ -372,10 +454,10 @@ class Group(BaseGroup):
         """
         Determine the suggestion that the group will send to the decision maker
         """
-        if total_x_count > self.vote_to_win:
+        if total_x_count >= self.vote_to_win:
             self.message_space = "Project X will earn you more money than Project Y"
             self.group_suggestion = False
-        elif total_y_count > self.vote_to_win:
+        elif total_y_count >= self.vote_to_win:
             self.message_space = "Project Y will earn you more money than Project X"
             self.group_suggestion = True
 
@@ -391,28 +473,49 @@ class Group(BaseGroup):
         """Set player payoffs for round"""
         for player in self.get_players():
             if self.g_final_decision == 0:
-                if player.id_in_group < 4:
+                if player.id_in_group < Constants.players_per_group:
                     player.payout = self.x_payout
                 else:
                     player.payout = self.y_payout
             elif self.g_final_decision == 1:
-                if player.id_in_group < 4:
+                if player.id_in_group < Constants.players_per_group:
                     player.payout = self.y_payout
                 else:
                     player.payout = self.x_payout
 
-    def set_add_payoffs(self):
+    def set_add_payoffs(self, average):
         """Add players payoff from bonus question"""
+        print('followed  average :', average)
         for player in self.get_players():
-            if player.participant.vars['role'] != 6:
-                if player.belief_average < self.alpha_average + .02 and player.belief_average > self.alpha_average - .02:
-                    player.belief_payout = 18
-                elif player.belief_average < self.alpha_average + 1 and player.belief_average > self.alpha_average - 1:
-                    player.belief_payout = 6
-                else:
-                    player.belief_payout = 0
+            if player.id_in_group != Constants.players_per_group:
+                if player.belief_average:
+                    if average - .02 <= float(player.belief_average) <= average + .02:
+                        player.belief_payout = 18
+                    elif average - 1 <= float(player.belief_average) <= average + 1:
+                        player.belief_payout = 6
+                    else:
+                        player.belief_payout = 0
 
+    def set_final_decision(self):
+        """Determine the final decision for group from the decision maker"""
+        player = self.get_player_by_id(Constants.players_per_group)
+        self.g_final_decision = player.final_decision
 
+    def determine_followed(self):
+        """Determine if the decision maker followed the group suggestion for the round"""
+        player = self.get_player_by_id(Constants.players_per_group)
+
+        if self.group_suggestion == 0:
+            if player.final_decision == 0:
+                player.followed = True
+            else:
+                player.followed = False
+
+        elif self.group_suggestion == 1:
+            if player.final_decision == 1:
+                player.followed = True
+            else:
+                player.followed = False
 
 class Player(BasePlayer):
     # Player level data
@@ -423,6 +526,7 @@ class Player(BasePlayer):
     final_payout = models.PositiveIntegerField()
     final_us_payout = models.PositiveIntegerField()
     belief_payout = models.PositiveIntegerField()
+    followed = models.BooleanField()
     individual_moral_cost = models.BooleanField(
      choices =[
                 [0, 'No'],
@@ -442,7 +546,7 @@ class Player(BasePlayer):
             [1, 'Yes']
         ]
     )
-    belief_average = models.DecimalField(min=0, max=30,max_digits=3,decimal_places=1)
+    belief_average = models.DecimalField(min=0, max=30, max_digits=3, decimal_places=1)
 
     final_decision = models.BooleanField(
         choices=[

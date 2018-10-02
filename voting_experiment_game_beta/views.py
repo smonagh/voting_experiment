@@ -9,14 +9,14 @@ from ast import literal_eval
 class Voting_stage1(Page):
 
     def is_displayed(self):
-        player_id_list = [x * 4 for x in range(0, 12)]
-        if self.player.id_in_group not in player_id_list and self.subsession.round_numbe < Constants.num_rounds:
+        player_id_list = [x * Constants.players_per_group for x in range(0, 12)]
+        if self.player.id_in_group not in player_id_list and self.subsession.round_number < Constants.num_rounds:
 
             return self.player
 
     def vars_for_template(self):
-        treatment = literal_eval(Constants.round_order)[self.round_number]
-        treatment_dict = literal_eval(Constants.treatment_dict)
+        treatment = literal_eval(self.subsession.round_order)[self.round_number]
+        treatment_dict = literal_eval(self.subsession.treatment_dict)
         if treatment == 1:
             if self.player.id_in_group:
                 vote_display = random.randint(1, 2)
@@ -30,7 +30,7 @@ class Voting_stage1(Page):
         else:
             vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'votes': treatment_dict['treatment_{}'.format(treatment)]['votes'],
                 'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
@@ -40,13 +40,13 @@ class Voting_stage1(Page):
 
 class Voting_stage3(Page):
     def is_displayed(self):
-        player_id_list = [x * 4 for x in range(0, 12)]
+        player_id_list = [x * Constants.players_per_group for x in range(0, 12)]
         if self.player.id_in_group not in player_id_list and self.subsession.round_number < Constants.num_rounds:
             return self
 
     def vars_for_template(self):
-        treatment = literal_eval(Constants.round_order)[self.round_number]
-        treatment_dict = literal_eval(Constants.treatment_dict)
+        treatment = literal_eval(self.subsession.round_order)[self.round_number - 1]
+        treatment_dict = literal_eval(self.subsession.treatment_dict)
         if treatment == 1:
             if self.player.id_in_group:
                 vote_display = random.randint(1,2)
@@ -60,14 +60,14 @@ class Voting_stage3(Page):
         else:
             vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'votes': treatment_dict['treatment_{}'.format(treatment)]['votes'],
                 'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,
                 'x_payout': self.group.x_payout,
                 'y_payout': self.group.y_payout,
-                'equal_round': self.group.equal_round}
+                'conflict_round': self.group.conflict_round}
 
     form_model = models.Player
     form_fields = ['vote']
@@ -75,16 +75,15 @@ class Voting_stage3(Page):
 class Voting_stage3_2(Page):
 
     def is_displayed(self):
-        player_id_list = [x * 4 for x in range(0, 12)]
-        if (self.subsession.round_number == 18) and\
-                self.player.id_in_group not in player_id_list and self.subsession.round_number < Constants.num_rounds:
+        if (self.subsession.round_number == 30) and\
+                self.player.id_in_group != Constants.players_per_group and self.subsession.round_number < Constants.num_rounds:
             return self
 
     form_model = models.Player
     form_fields = ['belief_average']
     def vars_for_template(self):
-        treatment = literal_eval(Constants.round_order)[self.round_number]
-        treatment_dict = literal_eval(Constants.treatment_dict)
+        treatment = literal_eval(self.subsession.round_order)[self.round_number - 1]
+        treatment_dict = literal_eval(self.subsession.treatment_dict)
         if treatment == 1:
             if self.player.id_in_group:
                 vote_display = random.randint(1, 2)
@@ -99,7 +98,7 @@ class Voting_stage3_2(Page):
         else:
             vote_display = random.randint(1, 5)
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
-                'votes': treatment_dict['treatment_{}'.format(treatment)],
+                'votes': treatment_dict['treatment_{}'.format(treatment)]['votes'],
                 'vote_display': vote_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
@@ -111,7 +110,7 @@ class Voting_stage3_2(Page):
 class Decision_stage1(Page):
 
     def is_displayed(self):
-        player_id_list = [x * 4 for x in range(0, 12)]
+        player_id_list = [x * Constants.players_per_group for x in range(0, 12)]
         if self.player.id_in_group in player_id_list and self.subsession.round_number< Constants.num_rounds:
             return self.player
 
@@ -126,17 +125,21 @@ class Decision_stage1(Page):
 class Game_Wait_1(WaitPage):
 
     def after_all_players_arrive(self):
-        self.group.total_vote_count(self.subsession.round_order)
-        self.group.is_moral_cost()
+        if self.subsession.round_number < Constants.num_rounds:
+            self.group.total_vote_count()
+            self.group.assign_moral_cost()
 
 class Game_Wait_2(WaitPage):
 
     def after_all_players_arrive(self):
-        self.group.get_player_by_id(Constants.players_per_group).decision_for_group()
+        self.group.set_final_decision()
+        self.group.determine_followed()
         self.group.set_payoffs()
         if self.round_number == Constants.num_rounds - 1:
-            self.group.set_add_payoffs()
-
+            average = self.subsession.set_followed_average()
+            for player in self.group.get_players():
+                if player.id_in_group < Constants.players_per_group:
+                    self.group.set_add_payoffs(average)
 
 
 class Game_Wait_4(WaitPage):
@@ -146,15 +149,14 @@ class Game_Wait_4(WaitPage):
                 return self
 
         def after_all_players_arrive(self):
-            self.group.followed()
-
+            pass
 
 class MyPage(Page):
     def is_displayed(self):
         if self.subsession.round_number == Constants.num_rounds:
             return self.player
     form_model = models.Player
-    form_fields = ['age','field','gender']
+    form_fields = ['age', 'field', 'gender']
 
 class Game_Wait_3(WaitPage):
     def is_displayed(self):
@@ -162,7 +164,9 @@ class Game_Wait_3(WaitPage):
             return self
 
     def after_all_players_arrive(self):
-            self.group.final_payout_return()
+            self.subsession.final_payoff_return()
+            for player in self.subsession.get_players():
+                print(player.final_payout, player.id_in_group, player.in_rounds(30, 30)[0].belief_payout, self.subsession.in_round(30).followed_average)
 
 
 class Results(Page):

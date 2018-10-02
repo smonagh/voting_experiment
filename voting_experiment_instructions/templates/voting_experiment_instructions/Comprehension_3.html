@@ -6,60 +6,48 @@
 {% endblock %}
 {% block content %}
 
-<style>
- td,th{
+<div class="instructions well well-lg" style="">
+    <p>Suppose you see the following screen. You are participant <strong>A3</strong>.</p>
+        <table style = 'border-color:black;border-style:solid'>
+            <tr style = 'border-color:black;border-style:solid'>
+                <col width = '160px' />
+                <col width = '160px' />
+                <col width = '160px' />
+                <col width = '160px' />
+                <col width = '160px' />
+                <col width = '160px' />
 
-   padding: 10px;
-}
+                <th style = 'border-color:black;border-style:solid'>Type A Participant</th>
+                <th style = 'border-color:black;border-style:solid'>A1</th>
+                <th style = 'border-color:black;border-style:solid'>A2 (You)</th>
+                <th style = 'border-color:black;border-style:solid'>A3</th>
+                <th style = 'border-color:black;border-style:solid'>A4</th>
+                <th style = 'border-color:black;border-style:solid'>A5</th>
+            </tr>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th style = 'border-color:black;border-style:solid'>Number of votes</th>
+                <th style = 'border-color:black;border-style:solid'>1</th>
+                <th style = 'border-color:black;border-style:solid'>3</th>
+                <th style = 'border-color:black;border-style:solid'>1</th>
+                <th style = 'border-color:black;border-style:solid'>3</th>
+                <th style = 'border-color:black;border-style:solid'>3</th>
+            </tr>
+            <tr style = 'border-color:black;border-style:solid'>
+                <th style = 'border-color:black;border-style:solid'>Decision</th>
+                <th style = 'border-color:black;border-style:solid'>Message X</th>
+                <th style = 'border-color:black;border-style:solid'>?</th>
+                <th style = 'border-color:black;border-style:solid'>Message X</th>
+                <th style = 'border-color:black;border-style:solid'>Message Y</th>
+                <th style = 'border-color:black;border-style:solid'>Message X</th>
+            </tr>
+        </table>
+    <p>The project with at lest <strong>6</strong> votes will be recommended to participant B</p>
 
-table{
-  border-color: black;
-  border-style: solid;
-}
-th {
-  border-color: black;
-  border-style: solid;
-  border-width: 2px;
+    {% formfield player.q_6 with label="In this situation, which message will be sent if you vote for Message X?  : " %}
+    {% formfield player.q_7 with label="In this situation, which message will be sent if you vote for Message Y?  : " %}
 
-}
-
-</style>
-<div style ='background-color: #f5f5f5;border-radius: 25px; padding:20px;'>
-    &nbsp;
-    &nbsp;
-            <p>Suppose you see the following screen. You are participant <strong>A3</strong>.</p>
-            <table class = "table-bordered"></table>
-                <table class = "table" style ='background-color:white;width: 85%; margin-left: auto; margin-right: auto;'>
-                    <tr style="border-bottom-color: black">
-                      <col width = '160px' />
-                      <col width = '160px' />
-                      <col width = '160px' />
-                      <col width = '160px' />
-                        <th><strong>Type A Participant</strong></th>
-                        <th>A1</th>
-                        <th>A2</th>
-                        <th>A3 (You)</th>
-                    </tr>
-                    <tr>
-                        <th><strong>Number of Votes</strong></th>
-                        <th> 2</th>
-                        <th> 2 </th>
-                        <th> 1 </th>
-                    </tr>
-                    <tr>
-                        <th>Decision</th>
-                        <th>Message X</th>
-                        <th>Message Y</th>
-                        <th>?</th>
-                    </tr>
-                </table>
-                <p> The project with at least 3 votes will be recommended to participant B</p>
-            &nbsp;
-            &nbsp;
 </div>
-{%formfield player.q_5 with label="In this situation, which message will be sent if you vote for Message X?" %}
-&nbsp;
-{%formfield player.q_6 with label="In this situation, which message will be sent if you vote for Message Y?" %}
+
 {% next_button %}
 
 {% endblock %}
