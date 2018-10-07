@@ -225,6 +225,8 @@ class Subsession(BaseSubsession):
             while check:
                 sample_list = [i for i in range(1, Constants.players_per_group)]
                 sample = np.random.choice(sample_list, 5, replace=False)
+                print(len(round_order))
+                print(len(tracker_dict['player_1']['treatment_1']['id']))
                 for player_num in range(1, Constants.players_per_group):
                     tracker_dict['player_{}'.format(player_num)]['treatment_{}'.format(
                         current_round)]['id'][i] = sample[player_num - 1]
@@ -240,7 +242,7 @@ class Subsession(BaseSubsession):
         group_id_rounds = literal_eval(self.group_id_rounds)
         for player in range(1, Constants.players_per_group):
             player_list = []
-            for cur_round in range(1, Constants.num_rounds - 1):
+            for cur_round in range(Constants.num_rounds - 1):
                 for treatment in range(1, Constants.treatments + 1):
                     if tracker_dict['player_{}'.format(player)]['treatment_{}'.format(treatment)]['id'][cur_round] > 0:
                         player_list.append(tracker_dict['player_{}'.format(player)][
@@ -353,10 +355,11 @@ class Group(BaseGroup):
         Assign players id in round for each player in the game
         """
         group_id_rounds = literal_eval(self.subsession.group_id_rounds)
+        print(group_id_rounds)
         if self.round_number != Constants.num_rounds:
-            for i, player in enumerate(self.get_players()):
-                i += 1
-                player.id_in_round = group_id_rounds['player_{}'.format(i)][self.round_number - 2]
+            for player in self.get_players():
+                print('***** ', self.round_number - 1)
+                player.id_in_round = group_id_rounds['player_{}'.format(player.id_in_group)][self.round_number - 1]
 
     def assign_payoff_rounds(self):
         """
@@ -370,18 +373,18 @@ class Group(BaseGroup):
         """
         Assign player vote weight for each player in the game
         """
-        treatment_in_round = literal_eval(self.subsession.round_order)[self.round_number - 2]
+        treatment_in_round = literal_eval(self.subsession.round_order)[self.round_number - 1]
         treatment_info = literal_eval(self.subsession.treatment_dict)['treatment_{}'.format(treatment_in_round)]
 
         for player in self.get_players():
-            if player.id_in_round:
+            if player.id_in_round <= treatment_info['num_high']:
                 player.vote_weight = max(treatment_info['votes'])
             else:
                 player.vote_weight = 1
 
     def assign_vote_to_win(self):
         round_order = literal_eval(self.subsession.round_order)
-        cur_round = round_order[self.round_number - 2]
+        cur_round = round_order[self.round_number - 1]
         self.vote_to_win = literal_eval(
             self.subsession.treatment_dict)['treatment_{}'.format(cur_round)]['quota']
 

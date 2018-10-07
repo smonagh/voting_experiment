@@ -47,21 +47,13 @@ class Voting_stage3(Page):
     def vars_for_template(self):
         treatment = literal_eval(self.subsession.round_order)[self.round_number - 1]
         treatment_dict = literal_eval(self.subsession.treatment_dict)
-        if treatment == 1:
-            if self.player.id_in_group:
-                vote_display = random.randint(1,2)
-            else:
-                vote_display = random.randint(3,5)
-        elif treatment == 2:
-            if self.player.id_in_group:
-                vote_display = 3
-            else:
-                vote_display = 1
-        else:
-            vote_display = random.randint(1, 5)
+        id_display = self.player.id_in_round
+        if self.player.id_in_round != 6:
+            vote_display = treatment_dict['treatment_{}'.format(treatment)]['votes'][id_display - 1 ]
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
                 'votes': treatment_dict['treatment_{}'.format(treatment)]['votes'],
                 'vote_display': vote_display,
+                'id_display': id_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,
@@ -84,22 +76,13 @@ class Voting_stage3_2(Page):
     def vars_for_template(self):
         treatment = literal_eval(self.subsession.round_order)[self.round_number - 1]
         treatment_dict = literal_eval(self.subsession.treatment_dict)
-        if treatment == 1:
-            if self.player.id_in_group:
-                vote_display = random.randint(1, 2)
-            else:
-                vote_display = random.randint(3, 5)
-        elif treatment == 2:
-
-            if self.player.id_in_group:
-                vote_display = 3
-            else:
-                vote_display = 1
-        else:
-            vote_display = random.randint(1, 5)
+        id_display = self.player.id_in_round
+        if self.player.id_in_round != 6:
+            vote_display = treatment_dict['treatment_{}'.format(treatment)]['votes'][id_display - 1]
         return {'player_id': self.player.in_round(self.round_number).id_in_round,
                 'votes': treatment_dict['treatment_{}'.format(treatment)]['votes'],
                 'vote_display': vote_display,
+                'id_display': id_display,
                 'total_vote_display': self.group.total_vote_in_group,
                 'votes_to_win': self.group.vote_to_win,
                 'vote_weight': self.player.vote_weight,

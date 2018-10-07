@@ -88,10 +88,11 @@ class Player(BasePlayer):
 
     decision_field = models.CharField(
         widget=widgets.RadioSelect,
-        choices = [
+        choices=[
             'Project X',
             'Project Y'
-        ]
+        ],
+        initial='Project X'
     )
     num_wrong = models.IntegerField(initial=0)
     time_spent = models.FloatField()

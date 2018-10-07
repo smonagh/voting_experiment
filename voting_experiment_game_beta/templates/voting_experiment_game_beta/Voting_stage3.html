@@ -84,7 +84,7 @@ th {
             {% endif %}
     </div>
     <div class = "col-xs-col-sm-6col-md-6 col-lg-6" >
-        Your are now Participant <strong>A{{  player_id  }}</strong>
+        Your are now Participant <strong>A{{  id_display  }}</strong>
         <table class = "table-bordered"></table>
             <table class = "table" style ='background-color: white; width: 85%; margin-left: auto; margin-right: auto;'>
                 <tr style=" border: 1px; border-color:black; border-style:solid;" >
@@ -100,7 +100,7 @@ th {
                 <tr style=" border: 1px; border-color:black; border-style:solid;">
                     <th><strong>Number of Votes</strong></th>
                     {% for vote in votes %}
-                        {% if vote_display == forloop.counter %}
+                        {% if id_display == forloop.counter %}
                             <th>{{vote}} <p>(You)</p> </th>
                         {% else %}
                             <th>{{vote}}</th>
