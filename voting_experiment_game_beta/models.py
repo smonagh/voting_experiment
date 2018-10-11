@@ -16,7 +16,7 @@ class Constants(BaseConstants):
     players_per_group = 6
     num_rounds = 31
     show_up_fee = 0
-    conversion_rate = 2
+    conversion_rate = 6
     treatments = 3
 
 
@@ -103,7 +103,7 @@ class Subsession(BaseSubsession):
         treatment_dict = literal_eval(self.treatment_dict)
         for i in range(1, Constants.treatments + 1):
             if i == 1:
-                treatment_dict['treatment_1'] = {'votes': [2, 2, 1, 1, 1], 'quota': 5,
+                treatment_dict['treatment_1'] = {'votes': [2, 2, 1, 1, 1], 'quota': 4,
                                                  'high': 4,  'conflict': 3, 'num_high': 2}
             elif i == 2:
                 treatment_dict['treatment_2'] = {'votes': [3, 1, 1, 1, 1], 'quota': 4,
@@ -187,26 +187,30 @@ class Subsession(BaseSubsession):
         conflict_rounds = []
         conflict_tracker = {'treatment_{}'.format(i): 0 for i in range(1, Constants.treatments + 1)}
 
-        for cur_round in round_order:
+        for index, cur_round in enumerate(round_order):
+            index += 1
+
             if conflict_tracker['treatment_{}'.format(cur_round)] >= treatment_dict['treatment_{}'.format(
                     cur_round)]['conflict']:
                 conflict_rounds.append(False)
             else:
-                result = self.check_lower_bound(cur_round, treatment_dict)
+                rounds_needed = treatment_dict['treatment_{}'.format(
+                    cur_round)]['conflict'] - conflict_tracker['treatment_{}'.format(cur_round)]
+                result = self.check_lower_bound(cur_round, treatment_dict, index, rounds_needed)
                 conflict_rounds.append(result)
                 conflict_tracker['treatment_{}'.format(cur_round)] += result
-
+        print(conflict_tracker)
         self.group_conflict_rounds = str(conflict_rounds)
 
-    def check_lower_bound(self, cur_round, treatment_dict):
+    def check_lower_bound(self, cur_round, treatment_dict, cur_round_number, rounds_needed):
         """
         Make sure that result is assigned true if there are too few rounds left in the game to
         assign a true statement
         """
-        num_conflict = treatment_dict['treatment_{}'.format(cur_round)]['conflict']
-        remainder = (Constants.num_rounds - 1) - self.round_number
 
-        if num_conflict - remainder == 0:
+        remainder = (Constants.num_rounds - 1) - cur_round_number
+        #print('***************: ', va, remainder, var - remainder)
+        if rounds_needed - remainder <= 0:
             result = True
         else:
             result = np.random.choice([False, True])
@@ -225,8 +229,7 @@ class Subsession(BaseSubsession):
             while check:
                 sample_list = [i for i in range(1, Constants.players_per_group)]
                 sample = np.random.choice(sample_list, 5, replace=False)
-                print(len(round_order))
-                print(len(tracker_dict['player_1']['treatment_1']['id']))
+
                 for player_num in range(1, Constants.players_per_group):
                     tracker_dict['player_{}'.format(player_num)]['treatment_{}'.format(
                         current_round)]['id'][i] = sample[player_num - 1]
@@ -355,10 +358,8 @@ class Group(BaseGroup):
         Assign players id in round for each player in the game
         """
         group_id_rounds = literal_eval(self.subsession.group_id_rounds)
-        print(group_id_rounds)
         if self.round_number != Constants.num_rounds:
             for player in self.get_players():
-                print('***** ', self.round_number - 1)
                 player.id_in_round = group_id_rounds['player_{}'.format(player.id_in_group)][self.round_number - 1]
 
     def assign_payoff_rounds(self):
@@ -415,7 +416,7 @@ class Group(BaseGroup):
         """
         Determine if there is conflict in a given round or not
         """
-        conflict_round = literal_eval(self.subsession.group_conflict_rounds)[self.round_number - 2]
+        conflict_round = literal_eval(self.subsession.group_conflict_rounds)[self.round_number - 1]
         self.conflict_round = conflict_round
 
     def assign_relative_payout(self):
@@ -488,7 +489,6 @@ class Group(BaseGroup):
 
     def set_add_payoffs(self, average):
         """Add players payoff from bonus question"""
-        print('followed  average :', average)
         for player in self.get_players():
             if player.id_in_group != Constants.players_per_group:
                 if player.belief_average:

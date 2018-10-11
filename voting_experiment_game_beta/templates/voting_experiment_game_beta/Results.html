@@ -21,7 +21,7 @@
       <li>{{payoff}}</li>
     </ul>
     {% endfor %}
-    {% if player.id_in_group < 4 %}
+    {% if player.id_in_group < 6 %}
     <p> Your payoff for the belief question is: E${{belief_payout}}</p>
     {% endif %}
     <p> Your final payoff in experimental dollars is : E${{final_payout}}</p>
@@ -33,7 +33,7 @@
     <table>
         <tr>
             <th>Period</th>
-            {% if player.id_in_group < 4 %}
+            {% if player.id_in_group < 6 %}
             <th>Your Vote</th>
             {% endif %}
             <th>Group Vote</th>
@@ -43,7 +43,7 @@
         {% for a,b,c,d,e in row_list %}
         <tr>
             <td>{{a}}</td>
-            {% if player.id_in_group < 4%}
+            {% if player.id_in_group < 6%}
             <td>{{b}}</td>
             {% endif %}
             <td>{{c}}</td>
