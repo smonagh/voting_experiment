@@ -104,7 +104,7 @@ class Subsession(BaseSubsession):
         for i in range(1, Constants.treatments + 1):
             if i == 1:
                 treatment_dict['treatment_1'] = {'votes': [2, 2, 1, 1, 1], 'quota': 4,
-                                                 'high': 4,  'conflict': 3, 'num_high': 2}
+                                                 'high': 4,  'conflict': 7, 'num_high': 2}
             elif i == 2:
                 treatment_dict['treatment_2'] = {'votes': [3, 1, 1, 1, 1], 'quota': 4,
                                                  'high': 2, 'conflict': 10, 'num_high': 1}
@@ -286,10 +286,8 @@ class Subsession(BaseSubsession):
                 if prev.payout and prev.round_number in group_payoff_rounds['player_{}'.format(player.id_in_group)]:
                     final_payoff += prev.payout
 
-            if player.belief_payout:
-                player.final_payout = final_payoff + player.belief_payout
-            else:
-                player.final_payout = final_payoff
+            if player.id_in_group < Constants.players_per_group:
+                player.final_payout = final_payoff + player.in_round(30).belief_payout
             player.final_us_payout = final_payoff/Constants.conversion_rate
 
     def set_followed_average(self):
@@ -298,11 +296,9 @@ class Subsession(BaseSubsession):
         average_list = []
         for player in decision_list:
             followed_sum = 0
-            for prev_play in player.in_previous_rounds():
-                add = 0
+            for prev_play in player.in_all_rounds():
                 if prev_play.followed:
-                    add = 1
-                followed_sum += add
+                    followed_sum += 1
 
             average_list.append(followed_sum/(Constants.num_rounds - 1))
 
@@ -492,6 +488,7 @@ class Group(BaseGroup):
         for player in self.get_players():
             if player.id_in_group != Constants.players_per_group:
                 if player.belief_average:
+                    print(player.belief_average)
                     if average - .02 <= float(player.belief_average) <= average + .02:
                         player.belief_payout = 18
                     elif average - 1 <= float(player.belief_average) <= average + 1:
