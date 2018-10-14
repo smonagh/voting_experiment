@@ -74,8 +74,8 @@ class Subsession(BaseSubsession):
             self.gen_payment_rounds()
             self.gen_round_order()
             self.gen_tracker_dict()
-            self.set_id_rounds()
             self.set_conflict_rounds()
+            self.set_id_rounds()
         else:
             self.treatment_dict = self.in_round(1).treatment_dict
             self.players_id = self.in_round(1).players_id
@@ -223,20 +223,65 @@ class Subsession(BaseSubsession):
         """
         tracker_dict = literal_eval(self.tracker_dict)
         round_order = literal_eval(self.round_order)
+        conflict_check = literal_eval(self.group_conflict_rounds)
+        treatment_dict = literal_eval(self.treatment_dict)
+        conflict_dict = {'player_{}'.format(i):{
+            'treatment_1': 0, 'treatment_2': 0} for i in range(1, Constants.players_per_group)}
 
         for i, current_round in enumerate(round_order):
             check = True
+            second_check = True
             while check:
                 sample_list = [i for i in range(1, Constants.players_per_group)]
                 sample = np.random.choice(sample_list, 5, replace=False)
-
+                player_list = []
+                treatment_list = []
                 for player_num in range(1, Constants.players_per_group):
                     tracker_dict['player_{}'.format(player_num)]['treatment_{}'.format(
                         current_round)]['id'][i] = sample[player_num - 1]
 
-                check, tracker_dict = self.check_max_id_condition(current_round, tracker_dict)
+                    if current_round in [1, 2]:
+                        if current_round == 1 and sample[player_num - 1] in [1, 2] and conflict_check[i]:
+                            if conflict_dict['player_{}'.format(player_num)][
+                                  'treatment_1'] >= treatment_dict['treatment_1']['high']/2:
+                                second_check = True
+                                break
+                            else:
+                                conflict_dict['player_{}'.format(player_num)][
+                                    'treatment_1'] += 1
+                                second_check = False
+                                player_list.append(player_num)
+                                treatment_list.append(1)
+
+                        elif current_round == 2 and sample[player_num - 1] == 1 and conflict_check[i]:
+                            if conflict_dict['player_{}'.format(player_num)][
+                                  'treatment_2'] >= treatment_dict['treatment_2']['high']/2:
+                                second_check = True
+                                break
+                            else:
+                                conflict_dict['player_{}'.format(player_num)][
+                                    'treatment_2'] += 1
+                                second_check = False
+                                player_list.append(player_num)
+                                treatment_list.append(2)
+                        else:
+                            second_check = False
+                    else:
+                        second_check = False
+
+                if not second_check:
+                    check, tracker_dict = self.check_max_id_condition(current_round, tracker_dict)
+                    print(check)
+                    if check and player_list:
+                        print(player_list, treatment_list)
+                        print('minus hit')
+                        for treatment, player in enumerate(player_list):
+                            conflict_dict['player_{}'.format(player)][
+                                'treatment_{}'.format(treatment_list[treatment])] -= 1
+
         self.tracker_dict = str(tracker_dict)
         self.set_group_id(tracker_dict)
+        print('we did it')
 
     def set_group_id(self, tracker_dict):
         """
