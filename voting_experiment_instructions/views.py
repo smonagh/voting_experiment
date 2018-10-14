@@ -132,7 +132,13 @@ class Post_Instruction_Page(WaitPage):
 
 
 page_sequence = [
-
+Instructions_A,
+    Instructions_B,
+    Comprehension_1,
+    Comprehension_2,
+    Comprehension_3,
+    Comprehension_5,
+    Comprehension_6
     ]
 
 '''
