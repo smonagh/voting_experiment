@@ -202,14 +202,14 @@ class Subsession(BaseSubsession):
         print(conflict_tracker)
         self.group_conflict_rounds = str(conflict_rounds)
 
-    def check_lower_bound(self, cur_round, treatment_dict, cur_round_number, rounds_needed):
+    def check_lower_bound(self, cur_round_number, rounds_needed):
         """
         Make sure that result is assigned true if there are too few rounds left in the game to
         assign a true statement
         """
 
-        remainder = (Constants.num_rounds - 1) - cur_round_number
-        #print('***************: ', va, remainder, var - remainder)
+        remainder = (Constants.num_rounds) - cur_round_number
+
         if rounds_needed - remainder <= 0:
             result = True
         else:
@@ -317,6 +317,7 @@ class Subsession(BaseSubsession):
                 decision_maker_list.append(player)
 
         return decision_maker_list
+
 
 class Group(BaseGroup):
     # Group level data
@@ -434,7 +435,7 @@ class Group(BaseGroup):
             payout_list = [4, 16]
             random.shuffle(payout_list)
             self.x_payout = payout_list[0]
-            self.y_payout = payout_list[1]
+            self.y_payout = payout_list[0]
 
     def total_vote_count(self):
         """
